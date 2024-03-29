@@ -17,12 +17,11 @@ public unsafe class RotationUI : IDisposable
     private const uint IconNodeId = ContainerNodeId + 100;
     private const uint FrameNodeId = ContainerNodeId + 200;
     private const uint TextNodeId = ContainerNodeId + 300;
-    private const uint BaseNodeItemId = 6;
     private readonly AtkUnitBase* addonGathering = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering");
     private readonly ResNode rootNode;
     private readonly TextNode yieldNode;
-    private readonly List<ImageNode> actionNodes = new();
-    private readonly List<IDisposable> styleNodes = new();
+    private readonly List<ImageNode> actionNodes = [];
+    private readonly List<IDisposable> styleNodes = [];
     private readonly Rotation rotation;
 
 
@@ -145,8 +144,12 @@ public unsafe class RotationUI : IDisposable
 
     public void Dispose()
     {
-        if (addonGathering is not null)
+        if (addonGathering is not null && rootNode.ResourceNode is not null)
         {
+            // May randomly crash with bad timing
+            // System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
+            // at KamiLib.NativeUi.Node.UnlinkNodeAtStart(AtkResNode* resNode, AtkUnitBase* parent) in LazyGatherer\KamiLib\UserInterface\NativeUi\NodeHelper.cs:line 71
+            // at LazyGatherer.UI.RotationUI.Dispose() in LazyGatherer\LazyGatherer\UI\RotationUI.cs:line 150
             Node.UnlinkNodeAtStart(rootNode.ResourceNode, addonGathering);
             addonGathering->UpdateCollisionNodeList(false);
         }
@@ -160,9 +163,9 @@ public unsafe class RotationUI : IDisposable
     public void OnFramework()
     {
         if (rootNode.ResourceNode->IsVisible)
-        {           
+        {
             // Automatic gathering text node
-            var autoGathering = addonGathering->UldManager.SearchNodeById(2); 
+            var autoGathering = addonGathering->UldManager.SearchNodeById(2);
             rootNode.ResourceNode->ToggleVisibility(!autoGathering->IsVisible);
         }
     }
