@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="Dalamud.Plugin.Bootstrap.targets"/>
+
+    <PropertyGroup>
+        <Authors>Hiroa</Authors>
+        <Version>0.0.0.1</Version>
+        <Description>Display the optimal rotation for maximum yield with your current GP.</Description>
+        <PackageProjectUrl>https://github.com/Hiroa/LazyGatherer</PackageProjectUrl>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <TargetFramework>net8.0-windows</TargetFramework>
+        <Platforms>x64</Platforms>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <RootNamespace>LazyGatherer</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MathNet.Numerics" Version="5.0.0"/>
+        <ProjectReference Include="../KamiLib/KamiLib.csproj"/>
+    </ItemGroup>
+</Project>
