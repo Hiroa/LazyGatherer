@@ -39,7 +39,9 @@ public class GatheringController : IDisposable
         var contexts = GetGatheringContexts(addon);
         foreach (var gatheringContext in contexts)
         {
-            GatheringOutcomes.Add(this.GetBestOutcome(gatheringContext));
+            var bestOutcome = this.GetBestOutcome(gatheringContext);
+            Service.Log.Debug(bestOutcome.Key.ToString(gatheringContext)!);
+            GatheringOutcomes.Add(bestOutcome);
         }
     }
 
@@ -71,11 +73,11 @@ public class GatheringController : IDisposable
 
             // Context info from gui
             var itemRow = addon->UldManager.SearchNodeById((uint)(BaseNodeItemId + i));
-            
+
             // Ignore rare Object
-            var isRare = itemRow->GetComponent()->UldManager.SearchNodeById(7)->IsVisible;       
+            var isRare = itemRow->GetComponent()->UldManager.SearchNodeById(7)->IsVisible;
             if (isRare) continue;
-            
+
             var chanceNode = itemRow->GetComponent()->UldManager.SearchNodeById(10)->GetAsAtkTextNode()->NodeText;
             var boonChanceNode = itemRow->GetComponent()->UldManager.SearchNodeById(16)->GetAsAtkTextNode()->NodeText;
             var iconNode = itemRow->GetComponent()->UldManager.SearchNodeById(31);
