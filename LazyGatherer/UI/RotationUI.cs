@@ -65,7 +65,7 @@ public unsafe class RotationUI : IDisposable
         });
         yieldNode.ResourceNode->SetX(4f + (44 * index));
         yieldNode.ResourceNode->SetY(34f);
-        yieldNode.Node->SetText($"Expected yield: {outcome.Value.Yield}");
+        yieldNode.Node->SetText($"Expected yield: {Math.Round(outcome.Value.Yield, 1)}");
         yieldNode.ResourceNode->ToggleVisibility(config.DisplayEstimatedYield);
         rootNode.AddResourceNode(yieldNode, addonGathering);
     }
