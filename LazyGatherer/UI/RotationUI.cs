@@ -144,16 +144,6 @@ public unsafe class RotationUI : IDisposable
 
     public void Dispose()
     {
-        if (addonGathering is not null && rootNode.ResourceNode is not null)
-        {
-            // May randomly crash with bad timing
-            // System.AccessViolationException: Attempted to read or write protected memory. This is often an indication that other memory is corrupt.
-            // at KamiLib.NativeUi.Node.UnlinkNodeAtStart(AtkResNode* resNode, AtkUnitBase* parent) in LazyGatherer\KamiLib\UserInterface\NativeUi\NodeHelper.cs:line 71
-            // at LazyGatherer.UI.RotationUI.Dispose() in LazyGatherer\LazyGatherer\UI\RotationUI.cs:line 150
-            Node.UnlinkNodeAtStart(rootNode.ResourceNode, addonGathering);
-            addonGathering->UpdateCollisionNodeList(false);
-        }
-
         yieldNode.Dispose();
         styleNodes.ForEach(an => an.Dispose());
         actionNodes.ForEach(an => an.Dispose());
