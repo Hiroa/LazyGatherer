@@ -91,6 +91,7 @@ public class GatheringController : IDisposable
 
             // Compute bountifulBonus
             var bountifulBonus = ComputeBountifulBonus(playerGathering, gathering);
+            Service.Log.Info($"BountifulBonus: {bountifulBonus}");
             var gatheringContext = new GatheringContext
             {
                 RowId = (uint)i,
@@ -116,10 +117,10 @@ public class GatheringController : IDisposable
     {
         if (playerGathering > gathering * 1.1)
         {
-            return 3;
+            return 2;
         }
 
-        return playerGathering > gathering * 0.9 ? 2 : 1;
+        return playerGathering > gathering * 0.9 ? 1 : 0;
     }
 
     // Return the required gathering stat 
