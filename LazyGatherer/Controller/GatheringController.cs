@@ -54,12 +54,17 @@ public class GatheringController : IDisposable
         // Player info
         var uiState = UIState.Instance();
         var playerGathering = uiState->PlayerState.Attributes[72];
+        var playerPerception = uiState->PlayerState.Attributes[73];
+        var playerGp = uiState->PlayerState.Attributes[10];
 
         // Gathering point
         var player = Service.ClientState.LocalPlayer;
         var job = (Job)player!.ClassJob.Id;
         var gpId = player.TargetObject!.DataId;
         var gp = Service.DataManager.Excel.GetSheet<GatheringPoint>()!.GetRow(gpId)!;
+
+        // Compute bonus attempts
+        var bonusAttempts = ComputeBonusAttempts(gp, playerGathering, playerPerception, playerGp);
 
         for (var i = 0; i < 8; i++) // 8 items max by Gathering point
         {
@@ -91,7 +96,7 @@ public class GatheringController : IDisposable
 
             // Compute bountifulBonus
             var bountifulBonus = ComputeBountifulBonus(playerGathering, gathering);
-            Service.Log.Info($"BountifulBonus: {bountifulBonus}");
+
             var gatheringContext = new GatheringContext
             {
                 RowId = (uint)i,
@@ -99,7 +104,7 @@ public class GatheringController : IDisposable
                 AvailableGp = (int)player.CurrentGp,
                 BaseAmount = baseAmount.EqualsString("") ? 1 : baseAmount.ToInteger(),
                 Chance = chanceNode.ToInteger() / 100.0,
-                Attempts = gp.Count,
+                Attempts = gp.Count + bonusAttempts,
                 HasBoon = !boonChanceNode.EqualsString("-"),
                 Boon = boonChanceNode.EqualsString("-") ? 0 : boonChanceNode.ToInteger() / 100.0,
                 BountifulBonus = bountifulBonus,
@@ -113,14 +118,38 @@ public class GatheringController : IDisposable
         return contexts;
     }
 
+    private static int ComputeBonusAttempts(GatheringPoint gp, int playerGathering, int playerPerception, int playerGp)
+    {
+        foreach (var lazyRow in gp.GatheringPointBonus)
+        {
+            var gpb = lazyRow.Value;
+            if (gpb!.BonusType.Row != 14) // Qty +
+            {
+                continue;
+            }
+
+            switch (gpb.Condition.Value!.RowId)
+            {
+                case 14: // Gathering >=
+                    return playerGathering >= gpb.ConditionValue ? gpb.BonusValue : 0;
+                case 15: // Perception >=
+                    return playerPerception >= gpb.ConditionValue ? gpb.BonusValue : 0;
+                case 19: // GpMax >=
+                    return playerGp >= gpb.ConditionValue ? gpb.BonusValue : 0;
+            }
+        }
+
+        return 0;
+    }
+
     private static int ComputeBountifulBonus(int playerGathering, ushort gathering)
     {
         if (playerGathering > gathering * 1.1)
         {
-            return 2;
+            return 3;
         }
 
-        return playerGathering > gathering * 0.9 ? 1 : 0;
+        return playerGathering > gathering * 0.9 ? 2 : 1;
     }
 
     // Return the required gathering stat 
