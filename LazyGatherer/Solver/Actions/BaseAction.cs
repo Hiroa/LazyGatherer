@@ -13,9 +13,10 @@ namespace LazyGatherer.Solver.Actions
         public abstract int Gp { get; }
         public abstract int ExecutionOrder { get; }
 
-        public virtual bool CanExecute(GatheringContext context)
+        public virtual bool CanExecute(Rotation rotation)
         {
-            if (context.CharacterLevel < Level) 
+            var context = rotation.Context;
+            if (context.CharacterLevel < Level)
             {
                 return false;
             }

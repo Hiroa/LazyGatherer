@@ -6,7 +6,6 @@ using LazyGatherer.Solver.Data;
 
 namespace LazyGatherer.Solver
 {
-
     public class RotationGenerator
     {
         private readonly List<BaseAction> availableActions;
@@ -24,6 +23,7 @@ namespace LazyGatherer.Solver
 
                 availableActions.Add(module);
             }
+
             this.availableActions = availableActions.OrderBy(a => a.ExecutionOrder).ToList();
         }
 
@@ -50,7 +50,7 @@ namespace LazyGatherer.Solver
                 // generate a rotation each time action is repeated
                 var actionRepeatedRotation = currRotation;
 
-                while (currAction.CanExecute(actionRepeatedRotation.Context))
+                while (currAction.CanExecute(actionRepeatedRotation))
                 {
                     actionRepeatedRotation = actionRepeatedRotation.Clone();
                     actionRepeatedRotation.AddAction(currAction);
@@ -58,7 +58,7 @@ namespace LazyGatherer.Solver
                     NextRotation(currActionIdx + 1, actionRepeatedRotation);
                 }
             }
-            else if (currAction.CanExecute(currRotation.Context))
+            else if (currAction.CanExecute(currRotation))
             {
                 // generate rotations with action executed
                 var actionExecutedRotation = currRotation.Clone();

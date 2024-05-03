@@ -1,4 +1,5 @@
 ﻿using System;
+using LazyGatherer.Solver.Data;
 using Action = Lumina.Excel.GeneratedSheets2.Action;
 
 namespace LazyGatherer.Solver.Actions
@@ -16,10 +17,11 @@ namespace LazyGatherer.Solver.Actions
         public override int Gp => 50;
 
         public override int ExecutionOrder => 1;
-        
-        public override bool CanExecute(Data.GatheringContext context)
+
+        public override bool CanExecute(Rotation rotation)
         {
-            return base.CanExecute(context) && context.HasBoon;
+            var context = rotation.Context;
+            return base.CanExecute(rotation) && context.HasBoon;
         }
 
         public override void Execute(Data.GatheringContext context)

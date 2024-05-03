@@ -1,4 +1,5 @@
-﻿using Lumina.Excel.GeneratedSheets2;
+﻿using LazyGatherer.Solver.Data;
+using Lumina.Excel.GeneratedSheets2;
 
 namespace LazyGatherer.Solver.Actions
 {
@@ -12,12 +13,14 @@ namespace LazyGatherer.Solver.Actions
         public override bool IsRepeatable => true;
         public override int Gp => 300;
         public override int ExecutionOrder => 2;
-        public override bool CanExecute(Data.GatheringContext context)
+
+        public override bool CanExecute(Rotation rotation)
         {
-            return base.CanExecute(context) && context.CharacterLevel < 90;
+            var context = rotation.Context;
+            return base.CanExecute(rotation) && context.CharacterLevel < 90;
         }
 
-        public override void Execute(Data.GatheringContext context)
+        public override void Execute(GatheringContext context)
         {
             context.Attempts++;
 

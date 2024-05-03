@@ -1,4 +1,4 @@
-﻿
+﻿using LazyGatherer.Solver.Data;
 using Lumina.Excel.GeneratedSheets2;
 
 namespace LazyGatherer.Solver.Actions
@@ -16,7 +16,7 @@ namespace LazyGatherer.Solver.Actions
 
         public override int ExecutionOrder => 3;
 
-        public override void Execute(Data.GatheringContext context)
+        public override void Execute(GatheringContext context)
         {
             context.BountifulAttempts++;
 
