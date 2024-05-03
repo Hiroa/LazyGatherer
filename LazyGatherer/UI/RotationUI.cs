@@ -82,15 +82,23 @@ public unsafe class RotationUI : IDisposable
         actionNode.ResourceNode->SetWidth(40);
         actionNode.ResourceNode->SetHeight(40);
         actionNode.ResourceNode->NodeFlags = NodeFlags.Visible;
+        String iconTextureId;
         switch (context.Job)
         {
             case Job.Min:
-                actionNode.Node->LoadIconTexture(action.Key.MinerAction.Icon, 1);
+                iconTextureId = action.Key.MinerAction.Icon.ToString("000000");
+                // actionNode.Node->LoadIconTexture(action.Key.MinerAction.Icon, 1); // Do not use, randomly break the icons
                 break;
             case Job.Bot:
-                actionNode.Node->LoadIconTexture(action.Key.BotanistAction.Icon, 1);
+                iconTextureId = action.Key.BotanistAction.Icon.ToString("000000");
+                // actionNode.Node->LoadIconTexture(action.Key.BotanistAction.Icon, 1); // Do not use, randomly break the icons
+                break;
+            default:
+                iconTextureId = "000000";
                 break;
         }
+
+        actionNode.Node->LoadTexture($"ui/icon/001000/{iconTextureId}.tex");
 
         actionNodes.Add(actionNode);
         rootNode.AddResourceNode(actionNode, addonGathering);
@@ -108,7 +116,7 @@ public unsafe class RotationUI : IDisposable
         frameNode.ResourceNode->SetWidth(48);
         frameNode.ResourceNode->SetHeight(48);
         frameNode.ResourceNode->NodeFlags = NodeFlags.Visible;
-        frameNode.Node->LoadTexture("ui/uld/fourth/IconA_Frame.tex"); // Check other styles
+        frameNode.Node->LoadTexture("ui/uld/IconA_Frame.tex"); // Default work fine for all styles
         styleNodes.Add(frameNode);
         rootNode.AddResourceNode(frameNode, addonGathering);
     }
