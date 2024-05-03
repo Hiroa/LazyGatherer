@@ -71,6 +71,9 @@ public class GatheringController : IDisposable
             var item = Service.DataManager.GetExcelSheet<Item>()!.GetRow(itemId);
             if (item!.IsUnique) continue;
 
+            // Ignore collectable Object
+            if (item.IsCollectable) continue;
+
             // Context info from gui
             var itemRow = addon->UldManager.SearchNodeById((uint)(BaseNodeItemId + i));
 
