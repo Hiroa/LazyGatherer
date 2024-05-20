@@ -40,7 +40,7 @@ public class GatheringController : IDisposable
         foreach (var gatheringContext in contexts)
         {
             var bestOutcome = this.GetBestOutcome(gatheringContext);
-            Service.Log.Debug(bestOutcome.Key.ToString(gatheringContext)!);
+            Service.Log.Debug(bestOutcome.Key.ToString(gatheringContext));
             GatheringOutcomes.Add(bestOutcome);
         }
     }
@@ -123,7 +123,7 @@ public class GatheringController : IDisposable
         foreach (var lazyRow in gp.GatheringPointBonus)
         {
             var gpb = lazyRow.Value;
-            if (gpb!.BonusType.Row != 14) // Qty +
+            if (gpb!.BonusType.Row != 18) // Attempt +
             {
                 continue;
             }
