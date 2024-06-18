@@ -144,6 +144,7 @@ public class GatheringController : IDisposable
 
     private static int ComputeBountifulBonus(int playerGathering, ushort gathering)
     {
+        Service.Log.Debug($"{playerGathering}, {gathering}");
         if (playerGathering > gathering * 1.1)
         {
             return 3;
@@ -156,8 +157,8 @@ public class GatheringController : IDisposable
     private static ushort GetRequiredGathering(uint itemId)
     {
         var gItem = GetGatheringItemById(itemId);
-        var gatheringLevel = gItem!.GatheringItemLevel!.Value!.GatheringItemLevel;
-        var itemLevel = Service.DataManager.Excel.GetSheet<ItemLevel>()!.GetRow(gatheringLevel);
+        var itemLvlId = gItem!.GatheringItemLevel!.Value!.RowId;
+        var itemLevel = Service.DataManager.Excel.GetSheet<ItemLevel>()!.GetRow(itemLvlId);
         var gathering = itemLevel!.Gathering;
         return gathering;
     }
