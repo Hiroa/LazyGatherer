@@ -186,14 +186,10 @@ public class GatheringController : IDisposable
     private static unsafe bool IsGatheringPointLoaded(AddonGathering* addon)
     {
         //Check if any item is loaded
-        return (addon->GatheredItemId1 != 0 && addon->GatheredItemId1 != 4294967295)
-               || (addon->GatheredItemId2 != 0 && addon->GatheredItemId2 != 4294967295)
-               || (addon->GatheredItemId3 != 0 && addon->GatheredItemId3 != 4294967295)
-               || (addon->GatheredItemId4 != 0 && addon->GatheredItemId4 != 4294967295)
-               || (addon->GatheredItemId5 != 0 && addon->GatheredItemId5 != 4294967295)
-               || (addon->GatheredItemId6 != 0 && addon->GatheredItemId6 != 4294967295)
-               || (addon->GatheredItemId7 != 0 && addon->GatheredItemId7 != 4294967295)
-               || (addon->GatheredItemId8 != 0 && addon->GatheredItemId8 != 4294967295);
+        var list = GetItemsIdList(addon);
+        var loaded = false;
+        list.ForEach(i => loaded |= i > 0);
+        return loaded;
     }
 
     // private static unsafe List<uint> GetItemsIdList(AddonGathering* addon)
