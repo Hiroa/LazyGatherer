@@ -24,5 +24,6 @@
     <ItemGroup>
         <PackageReference Include="MathNet.Numerics" Version="5.0.0"/>
         <ProjectReference Include="../KamiLib/KamiLib.csproj"/>
+        <ProjectReference Include="../KamiToolKit/KamiToolKit.csproj"/>
     </ItemGroup>
 </Project>

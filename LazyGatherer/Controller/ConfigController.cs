@@ -12,14 +12,13 @@ public class ConfigController : IDisposable
     private readonly WindowSystem windowSystem = new();
     private readonly ConfigWindow configWindow;
     private readonly Action? openConfig;
-    public readonly Config Config;
 
     public ConfigController()
     {
-        Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
-        configWindow = new ConfigWindow(Config);
+        Service.Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
+        configWindow = new ConfigWindow();
         windowSystem.AddWindow(configWindow);
-        
+
         openConfig = () => { configWindow.Toggle(); };
         Service.Interface.UiBuilder.OpenConfigUi += openConfig;
         Service.Interface.UiBuilder.Draw += windowSystem.Draw;
@@ -42,5 +41,4 @@ public class ConfigController : IDisposable
     {
         configWindow.Toggle();
     }
-
 }
