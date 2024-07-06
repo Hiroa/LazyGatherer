@@ -28,12 +28,10 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
         var addonGathering = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
         foreach (var rotationNode in rotationNodes)
         {
-            if (rotationNode.IsVisible)
+            // Hide while quick gathering
+            if (rotationNode.IsVisible && addonGathering->GatherStatus == 2)
             {
-                // Automatic gathering text node
-                var autoGathering = addonGathering->UldManager.SearchNodeById(13);
-                rotationNode.IsVisible =
-                    !autoGathering->IsVisible(); //TODO  replace with the new CS AddonGathering->GatherStatus
+                rotationNode.IsVisible = false;
             }
         }
     }

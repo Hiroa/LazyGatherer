@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using LazyGatherer.Solver;
 using LazyGatherer.Solver.Comparator;
 using LazyGatherer.Solver.Data;
@@ -22,8 +20,8 @@ public class GatheringController : IDisposable
     public unsafe void OnFrameworkUpdate()
     {
         // Check Gathering addon is opened
-        var addon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering");
-        if (addon is null || !IsGatheringPointLoaded((AddonGathering*)addon))
+        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
+        if (addon is null || !IsGatheringPointLoaded(addon))
         {
             if (GatheringOutcomes.Count != 0)
                 GatheringOutcomes.Clear();
@@ -48,28 +46,17 @@ public class GatheringController : IDisposable
 
     public void Dispose() { }
 
-    private static unsafe List<GatheringContext> GetGatheringContexts(AtkUnitBase* addon)
+    private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon)
     {
-        var itemsId = GetItemsIdList((AddonGathering*)addon);
+        var itemsId = addon->ItemIds;
         Service.Log.Debug($"Items id {String.Join(", ", itemsId.ToArray())}");
 
         List<GatheringContext> contexts = [];
         // Player info
         var uiState = UIState.Instance();
         var playerGathering = uiState->PlayerState.Attributes[72];
-        var playerPerception = uiState->PlayerState.Attributes[73];
-        var playerGp = uiState->PlayerState.Attributes[10];
-
-        // Gathering point
         var player = Service.ClientState.LocalPlayer;
         var job = (Job)player!.ClassJob.Id;
-        var gpId = player.TargetObject!.DataId;
-        var gp = Service.DataManager.Excel.GetSheet<GatheringPoint>()!.GetRow(gpId)!;
-
-        // Compute bonus attempts
-        var bonusAttempts =
-            ComputeBonusAttempts(gp, playerGathering, playerPerception,
-                                 playerGp); //TODO  replace with the new CS AddonGathering->IntegrityTotal
 
         for (var i = 0; i < 8; i++) // 8 items max by Gathering point
         {
@@ -113,7 +100,7 @@ public class GatheringController : IDisposable
                 AvailableGp = (int)player.CurrentGp,
                 BaseAmount = baseAmount.EqualToString("") ? 1 : baseAmount.ToInteger(),
                 Chance = chanceNode.ToInteger() / 100.0,
-                Attempts = gp.Count + bonusAttempts,
+                Attempts = addon->IntegrityTotal->NodeText.ToInteger(),
                 HasBoon = !boonChanceNode.EqualToString("-"),
                 Boon = boonChanceNode.EqualToString("-") ? 0 : boonChanceNode.ToInteger() / 100.0,
                 BountifulBonus = bountifulBonus,
@@ -125,30 +112,6 @@ public class GatheringController : IDisposable
         }
 
         return contexts;
-    }
-
-    private static int ComputeBonusAttempts(GatheringPoint gp, int playerGathering, int playerPerception, int playerGp)
-    {
-        foreach (var lazyRow in gp.GatheringPointBonus)
-        {
-            var gpb = lazyRow.Value;
-            if (gpb!.BonusType.Row != 18) // Attempt +
-            {
-                continue;
-            }
-
-            switch (gpb.Condition.Value!.RowId)
-            {
-                case 14: // Gathering >=
-                    return playerGathering >= gpb.ConditionValue ? gpb.BonusValue : 0;
-                case 15: // Perception >=
-                    return playerPerception >= gpb.ConditionValue ? gpb.BonusValue : 0;
-                case 19: // GpMax >=
-                    return playerGp >= gpb.ConditionValue ? gpb.BonusValue : 0;
-            }
-        }
-
-        return 0;
     }
 
     private static int ComputeBountifulBonus(int playerGathering, ushort gathering)
@@ -186,55 +149,15 @@ public class GatheringController : IDisposable
     private static unsafe bool IsGatheringPointLoaded(AddonGathering* addon)
     {
         //Check if any item is loaded
-        var list = GetItemsIdList(addon);
-        var loaded = false;
-        list.ForEach(i => loaded |= i > 0);
-        return loaded;
-    }
-
-    // private static unsafe List<uint> GetItemsIdList(AddonGathering* addon)
-    // {
-    //     return
-    //     [
-    //         addon->GatheredItemId1,
-    //         addon->GatheredItemId2,
-    //         addon->GatheredItemId3,
-    //         addon->GatheredItemId4,
-    //         addon->GatheredItemId5,
-    //         addon->GatheredItemId6,
-    //         addon->GatheredItemId7,
-    //         addon->GatheredItemId8
-    //     ];
-    // }
-
-    private static unsafe List<uint> GetItemsIdList(AddonGathering* addon) //TODO DirtyFix while waiting CS update
-    {
-        try
+        foreach (var itemId in addon->ItemIds)
         {
-            var addonSize = Marshal.SizeOf(*addon);
-            var ptr = Marshal.AllocHGlobal(addonSize);
-            Marshal.StructureToPtr(*addon, ptr, false);
-
-            var list = new List<uint>
+            if (itemId > 0)
             {
-                (uint)Marshal.ReadInt32(ptr, 0x308),
-                (uint)Marshal.ReadInt32(ptr, 0x30C),
-                (uint)Marshal.ReadInt32(ptr, 0x310),
-                (uint)Marshal.ReadInt32(ptr, 0x314),
-                (uint)Marshal.ReadInt32(ptr, 0x318),
-                (uint)Marshal.ReadInt32(ptr, 0x31C),
-                (uint)Marshal.ReadInt32(ptr, 0x320),
-                (uint)Marshal.ReadInt32(ptr, 0x324),
-            };
-            Marshal.FreeHGlobal(ptr);
-            return list;
-        }
-        catch (Exception e)
-        {
-            Service.Log.Info($"{e}");
+                return true;
+            }
         }
 
-        return [];
+        return false;
     }
 
     private static GatheringItem? GetGatheringItemById(uint id)
