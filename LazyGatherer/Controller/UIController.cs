@@ -11,6 +11,7 @@ namespace LazyGatherer.Controller;
 public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcomes) : IDisposable
 {
     private readonly List<RotationNode> rotationNodes = [];
+    private ButtonNode? cog;
 
     public void Dispose()
     {
@@ -51,6 +52,13 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
     private unsafe void InitUi(List<KeyValuePair<Rotation, GatheringOutcome>> gatheringOutcomes)
     {
         AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering");
+        if (gatheringAddon == null || gatheringOutcomes.Count == 0)
+        {
+            return;
+        }
+
+        cog = new ButtonNode();
+        Service.NativeController.AttachToAddon(cog, gatheringAddon, gatheringAddon->RootNode, NodePosition.AsLastChild);
         foreach (var go in gatheringOutcomes)
         {
             try
@@ -72,8 +80,23 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
         try
         {
             AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering");
-            rotationNodes.ForEach(
-                r => Service.NativeController.DetachFromAddon(r, gatheringAddon));
+            if (gatheringAddon != null)
+            {
+                if (cog != null)
+                {
+                    Service.NativeController.DetachFromAddon(cog, gatheringAddon);
+                }
+
+                rotationNodes.ForEach(
+                    r => Service.NativeController.DetachFromAddon(r, gatheringAddon));
+            }
+
+            if (cog != null)
+            {
+                cog.Dispose();
+                cog = null;
+            }
+
             rotationNodes.ForEach(r => r.Dispose());
             rotationNodes.Clear();
         }

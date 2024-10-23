@@ -4,6 +4,7 @@ using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using KamiToolKit.Nodes.Parts;
 using LazyGatherer.Solver.Actions;
 using LazyGatherer.Solver.Data;
 
@@ -31,12 +32,15 @@ public class IconNode : NodeBase<AtkResNode>
             Y = 4f,
             Width = 40,
             Height = 40,
-            TextureHeight = 40,
-            TextureWidth = 40,
-            TextureCoordinates = new Vector2(0.0f, 0.0f),
             NodeFlags = NodeFlags.Visible,
             IsVisible = true,
         };
+        var actionPart = new Part()
+        {
+            Size = new Vector2(40, 40),
+            TextureCoordinates = Vector2.Zero
+        };
+
         var iconTextureId = context.Job switch
         {
             Job.Min => action.MinerAction.Icon.ToString("000000"),
@@ -45,8 +49,9 @@ public class IconNode : NodeBase<AtkResNode>
             // actionNode.Node->LoadIcon(action.Key.BotanistAction.Icon); // Do not use, randomly break the icons
             _ => "000000"
         };
+        actionPart.LoadTexture($"ui/icon/001000/{iconTextureId}.tex");
+        actionNode.AddPart(actionPart);
 
-        actionNode.LoadTexture($"ui/icon/001000/{iconTextureId}.tex");
         Service.NativeController.AttachToNode(actionNode, this, NodePosition.AsLastChild);
 
         // Frame
@@ -56,12 +61,17 @@ public class IconNode : NodeBase<AtkResNode>
             Color = KnownColor.White.Vector(),
             X = (44 * index),
             Size = new Vector2(48, 48),
-            TextureSize = new Vector2(48, 48),
-            TextureCoordinates = new Vector2(0.0f, 0.0f),
             ImageNodeFlags = 0,
             IsVisible = true,
         };
-        frameNode.LoadTexture("ui/uld/IconA_Frame.tex"); // Default work fine for all styles   
+        var framePart = new Part()
+        {
+            Size = new Vector2(48, 48),
+            TextureCoordinates = Vector2.Zero
+        };
+        framePart.LoadTexture("ui/uld/IconA_Frame.tex"); // Default work fine for all styles   
+        frameNode.AddPart(framePart);
+
         Service.NativeController.AttachToNode(frameNode, this, NodePosition.AsLastChild);
 
         //Count

@@ -37,5 +37,6 @@ namespace LazyGatherer
         internal static Config Config { get; set; }
         internal static UIController UIController { get; set; }
         internal static GatheringController GatheringController { get; set; }
+        internal static ConfigController ConfigController { get; set; }
     }
 }

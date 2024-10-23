@@ -8,5 +8,5 @@ public class Config : IPluginConfiguration
     public bool Display = true;
     public bool DisplayEstimatedYield = false;
     public int YieldCalculator = 0;
-    public bool OneTurnRotation = true;
+    public bool OneTurnRotation = false;
 }

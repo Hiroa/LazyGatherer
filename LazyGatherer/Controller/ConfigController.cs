@@ -41,4 +41,9 @@ public class ConfigController : IDisposable
     {
         configWindow.Toggle();
     }
+
+    public void toggleConfigWindow()
+    {
+        configWindow.Toggle();
+    }
 }
