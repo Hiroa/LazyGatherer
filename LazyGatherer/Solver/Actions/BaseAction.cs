@@ -25,7 +25,7 @@ namespace LazyGatherer.Solver.Actions
             {
                 return true;
             }
-            else if (IsRepeatable)
+            else if (IsRepeatable && !rotation.Context.OneTurnRotation)
             {
                 return (context.Attempts - 1) * context.GpRegenPerAttempt + context.AvailableGp >= Gp;
             }

@@ -36,9 +36,16 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
         }
     }
 
-    public void Update()
+    public void Update(bool clearNodes)
     {
-        rotationNodes.ForEach(r => r.Update());
+        if (clearNodes)
+        {
+            this.ClearUi();
+        }
+        else
+        {
+            rotationNodes.ForEach(r => r.Update());
+        }
     }
 
     private unsafe void InitUi(List<KeyValuePair<Rotation, GatheringOutcome>> gatheringOutcomes)

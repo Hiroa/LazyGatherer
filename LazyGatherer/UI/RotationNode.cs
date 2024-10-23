@@ -58,7 +58,7 @@ public class RotationNode : NodeBase<AtkResNode>
             TextOutlineColor = KnownColor.Black.Vector(),
             // AlignmentType = AlignmentType.BottomRight,
             FontSize = 14,
-            Text = $"Expected yield: {Math.Round(outcome.Value.Yield, 1)}",
+            Text = $"Expected yield: {Math.Round(outcome.Value.Yield, 1)} for {outcome.Value.UsedGp} GP",
             IsVisible = true,
         };
 

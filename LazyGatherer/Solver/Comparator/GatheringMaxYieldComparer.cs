@@ -3,7 +3,7 @@ using LazyGatherer.Solver.Data;
 
 namespace LazyGatherer.Solver.Comparator
 {
-    public class GatheringYieldComparer : IComparer<GatheringOutcome>
+    public class GatheringMaxYieldComparer : IComparer<GatheringOutcome>
     {
         private readonly DoubleEpsilonComparer doubleComparer = new(1e-6);
 

@@ -105,7 +105,8 @@ public class GatheringController : IDisposable
                 Boon = boonChanceNode.EqualToString("-") ? 0 : boonChanceNode.ToInteger() / 100.0,
                 BountifulBonus = bountifulBonus,
                 CharacterLevel = player.Level,
-                Job = job
+                Job = job,
+                OneTurnRotation = Service.Config.OneTurnRotation
             };
             Service.Log.Debug($"{gatheringContext}");
             contexts.Add(gatheringContext);
@@ -143,7 +144,9 @@ public class GatheringController : IDisposable
             var outcome = GatheringCalculator.CalculateOutcome(r, baseOutcome);
             rotationOutcomes[r] = outcome;
         });
-        return rotationOutcomes.MaxBy(kv => kv.Value, new GatheringYieldComparer());
+        return Service.Config.YieldCalculator == 0
+                   ? rotationOutcomes.MaxBy(kv => kv.Value, new GatheringMaxYieldComparer())
+                   : rotationOutcomes.MaxBy(kv => kv.Value, new GatheringEfficiencyComparer());
     }
 
     private static unsafe bool IsGatheringPointLoaded(AddonGathering* addon)
@@ -163,5 +166,10 @@ public class GatheringController : IDisposable
     private static GatheringItem? GetGatheringItemById(uint id)
     {
         return Service.DataManager.GetExcelSheet<GatheringItem>()!.FirstOrDefault(x => x.Item.Row == id);
+    }
+
+    public void Update()
+    {
+        GatheringOutcomes.Clear();
     }
 }

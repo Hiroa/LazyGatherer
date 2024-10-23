@@ -45,7 +45,7 @@ namespace LazyGatherer.Solver
 
             var currAction = availableActions[currActionIdx];
 
-            if (currAction.IsRepeatable)
+            if (currAction.IsRepeatable && !currRotation.Context.OneTurnRotation)
             {
                 // generate a rotation each time action is repeated
                 var actionRepeatedRotation = currRotation;

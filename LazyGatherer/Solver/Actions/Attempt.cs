@@ -17,7 +17,7 @@ namespace LazyGatherer.Solver.Actions
         public override bool CanExecute(Rotation rotation)
         {
             var context = rotation.Context;
-            return base.CanExecute(rotation) && context.CharacterLevel < 90;
+            return !context.OneTurnRotation && base.CanExecute(rotation) && context.CharacterLevel < 90;
         }
 
         public override void Execute(GatheringContext context)

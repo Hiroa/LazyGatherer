@@ -8,7 +8,6 @@ namespace LazyGatherer
     public sealed class LazyGathererPlugin : IDalamudPlugin
     {
         private readonly ConfigController configController;
-        private readonly GatheringController gatheringController;
 
         public LazyGathererPlugin(IDalamudPluginInterface pluginInterface)
         {
@@ -16,8 +15,8 @@ namespace LazyGatherer
             Service.NativeController = new NativeController(pluginInterface);
 
             configController = new ConfigController();
-            gatheringController = new GatheringController();
-            Service.UIController = new UIController(gatheringController.GatheringOutcomes);
+            Service.GatheringController = new GatheringController();
+            Service.UIController = new UIController(Service.GatheringController.GatheringOutcomes);
 
             Service.Framework.Update += OnFrameworkUpdate;
         }
@@ -26,13 +25,13 @@ namespace LazyGatherer
         {
             Service.Framework.Update -= OnFrameworkUpdate;
             Service.UIController.Dispose();
-            gatheringController.Dispose();
+            Service.GatheringController.Dispose();
             configController.Dispose();
         }
 
         private void OnFrameworkUpdate(IFramework framework)
         {
-            gatheringController.OnFrameworkUpdate();
+            Service.GatheringController.OnFrameworkUpdate();
             Service.UIController.OnFrameworkUpdate();
         }
     }
