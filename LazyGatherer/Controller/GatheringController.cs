@@ -100,7 +100,7 @@ public class GatheringController : IDisposable
                 AvailableGp = (int)player.CurrentGp,
                 BaseAmount = baseAmount.EqualToString("") ? 1 : baseAmount.ToInteger(),
                 Chance = chanceNode.ToInteger() / 100.0,
-                Attempts = addon->IntegrityTotal->NodeText.ToInteger(),
+                Attempts = addon->IntegrityLeftover->NodeText.ToInteger(),
                 HasBoon = !boonChanceNode.EqualToString("-"),
                 Boon = boonChanceNode.EqualToString("-") ? 0 : boonChanceNode.ToInteger() / 100.0,
                 BountifulBonus = bountifulBonus,
