@@ -17,9 +17,15 @@ namespace LazyGatherer.Solver.Actions
 
         public override int ExecutionOrder => 1;
 
+        public override bool CanExecute(Rotation rotation)
+        {
+            return base.CanExecute(rotation) && !rotation.Context.YieldUsed;
+        }
+
         public override void Execute(GatheringContext context)
         {
             context.BaseAmount++;
+            context.YieldUsed = true;
 
             base.Execute(context);
         }

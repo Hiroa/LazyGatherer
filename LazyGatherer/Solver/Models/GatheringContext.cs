@@ -48,6 +48,9 @@ public class GatheringContext
     // Tells if the rotation is a one turn rotation
     public bool OneTurnRotation { get; set; }
 
+    // Tells if yield1/2 has been used
+    public bool YieldUsed { get; set; }
+
     public override string ToString()
     {
         var sb = new StringBuilder();
