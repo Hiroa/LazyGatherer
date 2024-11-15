@@ -1,14 +1,14 @@
 ﻿using System;
 using LazyGatherer.Solver.Data;
-using Action = Lumina.Excel.GeneratedSheets2.Action;
+using Action = Lumina.Excel.Sheets.Action;
 
 namespace LazyGatherer.Solver.Actions
 {
     // Maîtrise du terrain III
     public class Chance3 : BaseAction
     {
-        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(294)!;
-        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(295)!;
+        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(294);
+        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(295);
 
         public override bool IsRepeatable => false;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Solver.Data;
 

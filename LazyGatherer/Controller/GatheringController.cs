@@ -6,7 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using LazyGatherer.Solver;
 using LazyGatherer.Solver.Comparator;
 using LazyGatherer.Solver.Data;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Controller;
 
@@ -55,8 +55,9 @@ public class GatheringController : IDisposable
         // Player info
         var uiState = UIState.Instance();
         var playerGathering = uiState->PlayerState.Attributes[72];
+        Service.Log.Verbose($"Player has {playerGathering} gathering");
         var player = Service.ClientState.LocalPlayer;
-        var job = (Job)player!.ClassJob.Id;
+        var job = (Job)player!.ClassJob.Value.RowId;
 
         for (var i = 0; i < 8; i++) // 8 items max by Gathering point
         {
@@ -66,8 +67,8 @@ public class GatheringController : IDisposable
             Service.Log.Verbose($"Item id {itemId}");
 
             // Ignore unique object
-            var item = Service.DataManager.GetExcelSheet<Item>()!.GetRow(itemId);
-            Service.Log.Verbose($"Item is unique: {item!.IsUnique}");
+            var item = Service.DataManager.GetExcelSheet<Item>().GetRow(itemId);
+            Service.Log.Verbose($"Item is unique: {item.IsUnique}");
             if (item.IsUnique) continue;
 
             // Ignore collectable Object
@@ -78,9 +79,10 @@ public class GatheringController : IDisposable
             var itemRow = addon->UldManager.SearchNodeById((uint)(BaseNodeItemId + i));
 
             // Ignore rare Object
-            var isRare = itemRow->GetComponent()->UldManager.SearchNodeById(7)->IsVisible();
+            var isRare =
+                itemRow->GetComponent()->UldManager.SearchNodeById(7)->IsVisible(); //Not consistent if rare and hidden
             Service.Log.Verbose($"Item is rare: {isRare}");
-            if (isRare) continue;
+            if (isRare) continue; // Nothing impact the gathering outcome for rare item
 
             var chanceNode = itemRow->GetComponent()->UldManager.SearchNodeById(10)->GetAsAtkTextNode()->NodeText;
             var boonChanceNode = itemRow->GetComponent()->UldManager.SearchNodeById(16)->GetAsAtkTextNode()->NodeText;
@@ -128,9 +130,9 @@ public class GatheringController : IDisposable
     private static ushort GetRequiredGathering(uint itemId)
     {
         var gItem = GetGatheringItemById(itemId);
-        var itemLvlId = gItem!.GatheringItemLevel!.Value!.RowId;
-        var itemLevel = Service.DataManager.Excel.GetSheet<ItemLevel>()!.GetRow(itemLvlId);
-        var gathering = itemLevel!.Gathering;
+        var itemLvlId = gItem.GatheringItemLevel.Value.RowId;
+        var itemLevel = Service.DataManager.Excel.GetSheet<ItemLevel>().GetRow(itemLvlId);
+        var gathering = itemLevel.Gathering;
         return gathering;
     }
 
@@ -163,9 +165,9 @@ public class GatheringController : IDisposable
         return false;
     }
 
-    private static GatheringItem? GetGatheringItemById(uint id)
+    private static GatheringItem GetGatheringItemById(uint id)
     {
-        return Service.DataManager.GetExcelSheet<GatheringItem>()!.FirstOrDefault(x => x.Item.Row == id);
+        return Service.DataManager.GetExcelSheet<GatheringItem>().FirstOrDefault(x => x.Item.RowId == id);
     }
 
     public void Update()

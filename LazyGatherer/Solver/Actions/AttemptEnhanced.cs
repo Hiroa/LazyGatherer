@@ -1,5 +1,5 @@
 ﻿using LazyGatherer.Solver.Data;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Solver.Actions
 {
@@ -8,8 +8,8 @@ namespace LazyGatherer.Solver.Actions
     {
         protected override int Level => 90;
 
-        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(215)!;
-        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(232)!;
+        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(215);
+        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(232);
         public override bool IsRepeatable => true;
         public override int Gp => 300;
         public override int ExecutionOrder => 2;

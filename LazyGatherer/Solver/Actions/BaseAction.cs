@@ -1,6 +1,6 @@
 ﻿using Dalamud.Utility;
 using LazyGatherer.Solver.Data;
-using Action = Lumina.Excel.GeneratedSheets2.Action;
+using Action = Lumina.Excel.Sheets.Action;
 
 namespace LazyGatherer.Solver.Actions
 {
@@ -25,14 +25,13 @@ namespace LazyGatherer.Solver.Actions
             {
                 return true;
             }
-            else if (IsRepeatable && !rotation.Context.OneTurnRotation)
+
+            if (IsRepeatable && !rotation.Context.OneTurnRotation)
             {
                 return (context.Attempts - 1) * context.GpRegenPerAttempt + context.AvailableGp >= Gp;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public virtual void Execute(GatheringContext context)
@@ -43,7 +42,7 @@ namespace LazyGatherer.Solver.Actions
         public override string ToString()
         {
             var player = Service.ClientState.LocalPlayer;
-            var job = (Job)player!.ClassJob.Id;
+            var job = (Job)player!.ClassJob.RowId;
             return job switch
             {
                 Job.Min => MinerAction.Name.ToDalamudString().ToString(),

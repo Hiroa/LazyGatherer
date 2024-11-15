@@ -1,13 +1,13 @@
 ﻿using LazyGatherer.Solver.Data;
-using Lumina.Excel.GeneratedSheets2;
+using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Solver.Actions
 {
     // Récolte abondante
     public class Bountiful1 : BaseAction
     {
-        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(4087)!;
-        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(4073)!;
+        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(4087);
+        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(4073);
         public override bool IsRepeatable => true;
 
         public override int Gp => 100;

@@ -1,6 +1,6 @@
 ﻿using System;
 using LazyGatherer.Solver.Data;
-using Action = Lumina.Excel.GeneratedSheets2.Action;
+using Action = Lumina.Excel.Sheets.Action;
 
 namespace LazyGatherer.Solver.Actions
 {
@@ -9,8 +9,8 @@ namespace LazyGatherer.Solver.Actions
     {
         protected override int Level => 50;
 
-        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(25590)!;
-        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>()!.GetRow(25589)!;
+        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(25590);
+        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(25589);
 
         public override bool IsRepeatable => false;
 
@@ -24,7 +24,7 @@ namespace LazyGatherer.Solver.Actions
             return base.CanExecute(rotation) && context.HasBoon;
         }
 
-        public override void Execute(Data.GatheringContext context)
+        public override void Execute(GatheringContext context)
         {
             context.Boon = Math.Min(context.Boon + 0.3, 1);
 
