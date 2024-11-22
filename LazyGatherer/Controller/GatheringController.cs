@@ -75,6 +75,9 @@ public class GatheringController : IDisposable
             Service.Log.Verbose($"Item is collectable: {item.IsCollectable}");
             if (item.IsCollectable) continue;
 
+            // Ignore seeds(20) and soil(21) (More consistent than checking for rare tag)
+            if (item.FilterGroup is 20 or 21) continue;
+
             // Context info from gui
             var itemRow = addon->UldManager.SearchNodeById((uint)(BaseNodeItemId + i));
 
