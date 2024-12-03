@@ -44,7 +44,6 @@ public class ButtonNode : NodeBase<AtkResNode>
         };
 
         Service.GameConfig.TryGet(SystemConfigOption.ColorThemeType, out uint colorTheme);
-        Service.Log.Info($"colorTheme: {colorTheme.ToString()}");
         switch (colorTheme)
         {
             case 0:

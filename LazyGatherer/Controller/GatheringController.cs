@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dalamud.Game.Addon.Lifecycle;
+using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using LazyGatherer.Solver;
@@ -16,25 +18,38 @@ public class GatheringController : IDisposable
 
     private const uint BaseNodeItemId = 17;
     private readonly RotationGenerator rotationGenerator = new();
+    private bool nodeOpened;
+
+    public unsafe GatheringController()
+    {
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringNodeOpening);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeClosing);
+
+        // If Gathering addon is already opened
+        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
+        nodeOpened = addon != null;
+    }
+
+    public void OnGatheringNodeOpening(AddonEvent addonEvent, AddonArgs addonArgs)
+    {
+        nodeOpened = true;
+    }
+
+    public void OnGatheringNodeClosing(AddonEvent addonEvent, AddonArgs addonArgs)
+    {
+        nodeOpened = false;
+        if (GatheringOutcomes.Count != 0)
+            GatheringOutcomes.Clear();
+    }
 
     public unsafe void OnFrameworkUpdate()
     {
-        // Check Gathering addon is opened
-        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
-        if (addon is null || !IsGatheringPointLoaded(addon))
-        {
-            if (GatheringOutcomes.Count != 0)
-                GatheringOutcomes.Clear();
+        // Check Gathering addon is opened or context isn't already loaded
+        if (!nodeOpened || GatheringOutcomes.Count != 0)
             return;
-        }
-
-        // Check context isn't already loaded
-        if (GatheringOutcomes.Count != 0)
-        {
-            return;
-        }
 
         // init context
+        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
         var contexts = GetGatheringContexts(addon);
         foreach (var gatheringContext in contexts)
         {
@@ -44,12 +59,16 @@ public class GatheringController : IDisposable
         }
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        Service.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringNodeOpening);
+        Service.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeClosing);
+    }
 
     private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon)
     {
         var itemsId = addon->ItemIds;
-        Service.Log.Debug($"Items id {String.Join(", ", itemsId.ToArray())}");
+        Service.Log.Debug($"Items id {string.Join(", ", itemsId.ToArray())}");
 
         List<GatheringContext> contexts = [];
         // Player info
@@ -154,26 +173,12 @@ public class GatheringController : IDisposable
                    : rotationOutcomes.MaxBy(kv => kv.Value, new GatheringEfficiencyComparer());
     }
 
-    private static unsafe bool IsGatheringPointLoaded(AddonGathering* addon)
-    {
-        //Check if any item is loaded
-        foreach (var itemId in addon->ItemIds)
-        {
-            if (itemId > 0)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static GatheringItem GetGatheringItemById(uint id)
     {
         return Service.DataManager.GetExcelSheet<GatheringItem>().FirstOrDefault(x => x.Item.RowId == id);
     }
 
-    public void Update()
+    public void ReloadContext()
     {
         GatheringOutcomes.Clear();
     }

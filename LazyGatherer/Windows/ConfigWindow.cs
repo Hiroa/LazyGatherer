@@ -38,7 +38,7 @@ public class ConfigWindow : Window, IDisposable
         if (rotationConfigChanged)
         {
             Service.Interface.SavePluginConfig(Service.Config);
-            Service.GatheringController.Update();
+            Service.GatheringController.ReloadContext();
             Service.UIController.Update(true);
         }
     }
