@@ -8,7 +8,7 @@
             "utility"
         ],
         "InternalName": "LazyGatherer",
-        "AssemblyVersion": "0.0.0.1",
+        "AssemblyVersion": "0.0.0.2",
         "RepoUrl": "https://github.com/Hiroa/LazyGatherer",
         "ApplicableVersion": "any",
         "DalamudApiLevel": 11,
@@ -16,8 +16,8 @@
         "IsTestingExclusive": "False",
         "DownloadCount": 1,
         "LastUpdate": 1618608322,
-        "DownloadLinkInstall": "https://github.com/Hiroa/LazyGatherer/releases/download/0.0.0.1/LazyGatherer.zip",
-        "DownloadLinkUpdate": "https://github.com/Hiroa/LazyGatherer/releases/download/0.0.0.1/LazyGatherer.zip",
+        "DownloadLinkInstall": "https://github.com/Hiroa/LazyGatherer/releases/download/0.0.0.2/LazyGatherer.zip",
+        "DownloadLinkUpdate": "https://github.com/Hiroa/LazyGatherer/releases/download/0.0.0.2/LazyGatherer.zip",
         "IconUrl": "https://raw.githubusercontent.com/Hiroa/LazyGatherer/main/LazyGatherer/Asset/icon.png"
     }
 ]
