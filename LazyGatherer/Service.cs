@@ -32,6 +32,9 @@ namespace LazyGatherer
         [PluginService]
         internal static IPluginLog Log { get; private set; } = null!;
 
+        [PluginService]
+        internal static IGameConfig GameConfig { get; private set; } = null!;
+
         // Plugin service
         internal static NativeController NativeController { get; set; }
         internal static Config Config { get; set; }

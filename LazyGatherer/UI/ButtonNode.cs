@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using Dalamud.Game.Config;
 using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -42,7 +43,27 @@ public class ButtonNode : NodeBase<AtkResNode>
             TextureCoordinates = new Vector2(0, 0)
         };
 
-        imagePart.LoadTexture("ui/uld/fourth/CircleButtons.tex");
+        Service.GameConfig.TryGet(SystemConfigOption.ColorThemeType, out uint colorTheme);
+        Service.Log.Info($"colorTheme: {colorTheme.ToString()}");
+        switch (colorTheme)
+        {
+            case 0:
+                imagePart.LoadTexture("ui/uld/CircleButtons.tex");
+                break;
+            case 1:
+                imagePart.LoadTexture("ui/uld/light/CircleButtons.tex");
+                break;
+            case 2:
+                imagePart.LoadTexture("ui/uld/third/CircleButtons.tex");
+                break;
+            case 3:
+                imagePart.LoadTexture("ui/uld/fourth/CircleButtons.tex");
+                break;
+            default:
+                imagePart.LoadTexture("ui/uld/CircleButtons.tex");
+                break;
+        }
+
         imageNode.AddPart(imagePart);
 
         MouseOver = () => imageNode.AddColor = new Vector3(0.1f, 0.1f, 0.1f);
