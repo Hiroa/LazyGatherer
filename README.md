@@ -19,4 +19,4 @@ Feel free to ask feature or report bug in the issue section.
 ## Thanks
 
  - Based on [FFXIVGathering](https://github.com/fdashx/FFXIVGathering) from fdashx  
- - Use [KamiLib](https://github.com/MidoriKami/KamiLib) & [KamiToolKit](https://github.com/MidoriKami/KamiToolKit) from MidoriKami
+ - Use [KamiToolKit](https://github.com/MidoriKami/KamiToolKit) from MidoriKami
