@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
+using KamiToolKit.Nodes;
 using LazyGatherer.Solver.Data;
 using LazyGatherer.UI;
 
@@ -11,7 +13,7 @@ namespace LazyGatherer.Controller;
 public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcomes) : IDisposable
 {
     private readonly List<RotationNode> rotationNodes = [];
-    private ButtonNode? cog;
+    private CircleButtonNode? cog;
 
     public void Dispose()
     {
@@ -57,7 +59,15 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             return;
         }
 
-        cog = new ButtonNode();
+        cog = new CircleButtonNode()
+        {
+            Position = new Vector2(450.0f, 8.0f),
+            Size = new Vector2(24f, 24f),
+            Icon = ButtonIcon.GearCog,
+            Tooltip = "LazyGatherer Configuration",
+            IsVisible = true,
+            OnClick = () => Service.ConfigController.ToggleConfigWindow(),
+        };
         Service.NativeController.AttachNode(cog, gatheringAddon->RootNode, NodePosition.AsLastChild);
         foreach (var go in gatheringOutcomes)
         {
@@ -65,8 +75,7 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             {
                 var rotationNode = new RotationNode(go);
                 rotationNodes.Add(rotationNode);
-                Service.NativeController.AttachNode(rotationNode, gatheringAddon->RootNode,
-                                                    NodePosition.AsLastChild);
+                Service.NativeController.AttachNode(rotationNode, gatheringAddon->RootNode, NodePosition.AsLastChild);
             }
             catch (Exception e)
             {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using Dalamud.Interface;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -14,51 +12,42 @@ namespace LazyGatherer.UI;
 
 public sealed class RotationNode : SimpleComponentNode
 {
-    private const uint ContainerNodeId = 6000;
-    private const uint TextMargin = 4;
-
-    private readonly ListNode<IconNode> actionsNode;
+    private readonly List<NodeBase> actionsNode = new();
     private readonly TextNode expectedYieldNode;
 
     public RotationNode(KeyValuePair<Rotation, GatheringOutcome> outcome)
     {
-        Position = new Vector2(496.0f, 68f + (44.0f * outcome.Key.Context.RowId));
-        IsVisible = Service.Config.Display;
-        actionsNode = new IconNodeList()
-        {
-            Options = new List<IconNode>(),
-            IsVisible = true,
-            Color = KnownColor.White.Vector(),
-            Margin = new Spacing(TextMargin),
-        };
-
-        Service.NativeController.AttachNode(actionsNode, this, NodePosition.AsLastChild);
-
         var context = outcome.Key.Context;
+        Position = new Vector2(496.0f, 68f + (44.0f * context.RowId));
+        IsVisible = Service.Config.Display;
+
         var kv = this.CompactActions(outcome.Key.Actions);
         var index = 0u;
-        foreach (var action in kv)
+        foreach (var (baseAction, count) in kv)
         {
-            var iconNode = new IconNode(context, action.Key, action.Value, index);
-            Service.NativeController.AttachNode(iconNode, this, NodePosition.AsLastChild);
-            actionsNode.Options.Add(iconNode);
+            var actionNode = new ActionNode(context, baseAction, count, index);
+            Service.NativeController.AttachNode(actionNode, this, NodePosition.AsLastChild);
+            actionsNode.Add(actionNode);
             index++;
         }
 
         expectedYieldNode = new TextNode
         {
-            Position = new Vector2(TextMargin + (44 * index), 26),
-            Size = new Vector2(20),
-            FontType = FontType.Axis,
-            TextFlags = TextFlags.Edge,
-            TextColor = KnownColor.White.Vector(),
-            TextOutlineColor = KnownColor.Black.Vector(),
+            Position = new Vector2(4f + (44 * index), 26),
+            TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             FontSize = 14,
             Text = $"Expected yield: {Math.Round(outcome.Value.Yield, 1)} for {outcome.Value.UsedGp} GP",
             IsVisible = true,
         };
-
         Service.NativeController.AttachNode(expectedYieldNode, this, NodePosition.AsLastChild);
+
+        Size = ComputeSize();
+    }
+
+    private Vector2 ComputeSize()
+    {
+        var width = 44 * actionsNode.Count + 4 + expectedYieldNode.Size.X;
+        return new Vector2(width, 48);
     }
 
     private Dictionary<BaseAction, int> CompactActions(List<BaseAction> actions)
@@ -77,12 +66,18 @@ public sealed class RotationNode : SimpleComponentNode
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
+        try
         {
-            actionsNode?.Options?.ForEach(iconNode => iconNode.Dispose());
-            actionsNode?.Dispose();
-            expectedYieldNode.Dispose();
-            base.Dispose(disposing);
+            if (disposing)
+            {
+                actionsNode.ForEach(iconNode => iconNode.Dispose());
+                expectedYieldNode.Dispose();
+                base.Dispose(disposing);
+            }
+        }
+        catch (Exception e)
+        {
+            Service.Log.Error("Error disposing RotationNode: " + e);
         }
     }
 

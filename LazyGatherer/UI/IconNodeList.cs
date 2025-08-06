@@ -1,10 +1,11 @@
 ﻿using KamiToolKit.Nodes;
+using KamiToolKit.System;
 
 namespace LazyGatherer.UI;
 
-public class IconNodeList : ListNode<IconNode>
+public class IconNodeList : ListNode<NodeBase>
 {
-    protected override string GetLabelForOption(IconNode option)
+    protected override string GetLabelForOption(NodeBase option)
     {
         return "GetLabelForOption";
     }
