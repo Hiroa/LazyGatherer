@@ -26,7 +26,7 @@ public class GatheringController : IDisposable
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeClosing);
 
         // If Gathering addon is already opened
-        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
+        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
         nodeOpened = addon != null;
     }
 
@@ -49,7 +49,7 @@ public class GatheringController : IDisposable
             return;
 
         // init context
-        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
+        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
         var contexts = GetGatheringContexts(addon);
         foreach (var gatheringContext in contexts)
         {

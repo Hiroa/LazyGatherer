@@ -21,7 +21,6 @@ public class ConfigController : IDisposable
 
         openConfig = () => { configWindow.Toggle(); };
         Service.Interface.UiBuilder.OpenConfigUi += openConfig;
-        Service.Interface.UiBuilder.Draw += windowSystem.Draw;
         Service.Commands.AddHandler(Command, new CommandInfo(CommandHandler)
         {
             HelpMessage = "Open configuration"
@@ -42,7 +41,7 @@ public class ConfigController : IDisposable
         configWindow.Toggle();
     }
 
-    public void toggleConfigWindow()
+    public void ToggleConfigWindow()
     {
         configWindow.Toggle();
     }

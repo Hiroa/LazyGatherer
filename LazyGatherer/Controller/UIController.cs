@@ -26,7 +26,7 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             InitUi(outcomes);
         }
 
-        var addonGathering = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering");
+        var addonGathering = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
         foreach (var rotationNode in rotationNodes)
         {
             // Hide while quick gathering
@@ -51,22 +51,22 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
 
     private unsafe void InitUi(List<KeyValuePair<Rotation, GatheringOutcome>> gatheringOutcomes)
     {
-        AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering");
+        AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
         if (gatheringAddon == null || gatheringOutcomes.Count == 0)
         {
             return;
         }
 
         cog = new ButtonNode();
-        Service.NativeController.AttachToAddon(cog, gatheringAddon, gatheringAddon->RootNode, NodePosition.AsLastChild);
+        Service.NativeController.AttachNode(cog, gatheringAddon->RootNode, NodePosition.AsLastChild);
         foreach (var go in gatheringOutcomes)
         {
             try
             {
                 var rotationNode = new RotationNode(go);
                 rotationNodes.Add(rotationNode);
-                Service.NativeController.AttachToAddon(rotationNode, gatheringAddon, gatheringAddon->RootNode,
-                                                       NodePosition.AsLastChild);
+                Service.NativeController.AttachNode(rotationNode, gatheringAddon->RootNode,
+                                                    NodePosition.AsLastChild);
             }
             catch (Exception e)
             {
@@ -79,16 +79,15 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
     {
         try
         {
-            AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering");
+            AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
             if (gatheringAddon != null)
             {
                 if (cog != null)
                 {
-                    Service.NativeController.DetachFromAddon(cog, gatheringAddon);
+                    Service.NativeController.DetachNode(cog);
                 }
 
-                rotationNodes.ForEach(
-                    r => Service.NativeController.DetachFromAddon(r, gatheringAddon));
+                rotationNodes.ForEach(r => Service.NativeController.DetachNode(r));
             }
 
             if (cog != null)
