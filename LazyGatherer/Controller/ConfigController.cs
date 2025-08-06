@@ -9,17 +9,19 @@ namespace LazyGatherer.Controller;
 public class ConfigController : IDisposable
 {
     private const String Command = "/lg";
-    private readonly WindowSystem windowSystem = new();
+    private readonly WindowSystem windowSystem;
     private readonly ConfigWindow configWindow;
     private readonly Action? openConfig;
 
     public ConfigController()
     {
         Service.Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
+        windowSystem = new WindowSystem(Service.Interface.Manifest.InternalName);
         configWindow = new ConfigWindow();
         windowSystem.AddWindow(configWindow);
 
         openConfig = () => { configWindow.Toggle(); };
+        Service.Interface.UiBuilder.Draw += windowSystem.Draw;
         Service.Interface.UiBuilder.OpenConfigUi += openConfig;
         Service.Commands.AddHandler(Command, new CommandInfo(CommandHandler)
         {
