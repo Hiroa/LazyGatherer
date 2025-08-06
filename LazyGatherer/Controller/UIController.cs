@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Dalamud.Game.Config;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -13,7 +14,7 @@ namespace LazyGatherer.Controller;
 public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcomes) : IDisposable
 {
     private readonly List<RotationNode> rotationNodes = [];
-    private CircleButtonNode? cog;
+    private ThemedCircleButtonNode? cog;
 
     public void Dispose()
     {
@@ -59,7 +60,7 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             return;
         }
 
-        cog = new CircleButtonNode()
+        cog = new ThemedCircleButtonNode()
         {
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
@@ -68,6 +69,8 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             IsVisible = true,
             OnClick = () => Service.ConfigController.ToggleConfigWindow(),
         };
+        Service.GameConfig.TryGet(SystemConfigOption.ColorThemeType, out uint colorTheme);
+        cog.LoadTheme(colorTheme);
         Service.NativeController.AttachNode(cog, gatheringAddon->RootNode, NodePosition.AsLastChild);
         foreach (var go in gatheringOutcomes)
         {
