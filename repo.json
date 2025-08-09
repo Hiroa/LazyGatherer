@@ -11,7 +11,7 @@
         "AssemblyVersion": "0.0.0.4",
         "RepoUrl": "https://github.com/Hiroa/LazyGatherer",
         "ApplicableVersion": "any",
-        "DalamudApiLevel": 12,
+        "DalamudApiLevel": 13,
         "IsHide": "False",
         "IsTestingExclusive": "False",
         "LastUpdate": 1618608322,
