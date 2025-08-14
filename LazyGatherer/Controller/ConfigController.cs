@@ -47,4 +47,11 @@ public class ConfigController : IDisposable
     {
         configWindow.Toggle();
     }
+
+    public void ToggleDisplay()
+    {
+        Service.Config.Display = !Service.Config.Display;
+        Service.Interface.SavePluginConfig(Service.Config);
+        Service.UIController.Update(false);
+    }
 }

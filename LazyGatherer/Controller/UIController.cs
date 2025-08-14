@@ -15,6 +15,7 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
 {
     private readonly List<RotationNode> rotationNodes = [];
     private ThemedCircleButtonNode? cog;
+    private ThemedCircleButtonNode? eye;
 
     public void Dispose()
     {
@@ -69,9 +70,25 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             IsVisible = true,
             OnClick = () => Service.ConfigController.ToggleConfigWindow(),
         };
+
+        eye = new ThemedCircleButtonNode()
+        {
+            Position = new Vector2(428.0f, 8.0f),
+            Size = new Vector2(24f, 24f),
+            Icon = ButtonIcon.Eye,
+            Tooltip = "LazyGatherer display",
+            IsVisible = true,
+            OnClick = () => Service.ConfigController.ToggleDisplay(),
+        };
+
+        // Load theme for cog and eye buttons
         Service.GameConfig.TryGet(SystemConfigOption.ColorThemeType, out uint colorTheme);
         cog.LoadTheme(colorTheme);
+        eye.LoadTheme(colorTheme);
+
+        // Attach the cog and eye buttons to the Gathering Addon root node
         Service.NativeController.AttachNode(cog, gatheringAddon->RootNode, NodePosition.AsLastChild);
+        Service.NativeController.AttachNode(eye, gatheringAddon->RootNode, NodePosition.AsLastChild);
         foreach (var go in gatheringOutcomes)
         {
             try
@@ -106,6 +123,12 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             {
                 cog.Dispose();
                 cog = null;
+            }
+
+            if (eye != null)
+            {
+                eye.Dispose();
+                eye = null;
             }
 
             rotationNodes.ForEach(r => r.Dispose());
