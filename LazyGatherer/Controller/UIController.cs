@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
-using Dalamud.Game.Config;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
@@ -14,8 +13,8 @@ namespace LazyGatherer.Controller;
 public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcomes) : IDisposable
 {
     private readonly List<RotationNode> rotationNodes = [];
-    private ThemedCircleButtonNode? cog;
-    private ThemedCircleButtonNode? eye;
+    private CircleButtonNode? cog;
+    private CircleButtonNode? eye;
 
     public void Dispose()
     {
@@ -61,7 +60,7 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             return;
         }
 
-        cog = new ThemedCircleButtonNode()
+        cog = new CircleButtonNode()
         {
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
@@ -71,7 +70,7 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             OnClick = () => Service.ConfigController.ToggleConfigWindow(),
         };
 
-        eye = new ThemedCircleButtonNode()
+        eye = new CircleButtonNode()
         {
             Position = new Vector2(428.0f, 8.0f),
             Size = new Vector2(24f, 24f),
@@ -80,11 +79,6 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             IsVisible = true,
             OnClick = () => Service.ConfigController.ToggleDisplay(),
         };
-
-        // Load theme for cog and eye buttons
-        Service.GameConfig.TryGet(SystemConfigOption.ColorThemeType, out uint colorTheme);
-        cog.LoadTheme(colorTheme);
-        eye.LoadTheme(colorTheme);
 
         // Attach the cog and eye buttons to the Gathering Addon root node
         Service.NativeController.AttachNode(cog, gatheringAddon->RootNode, NodePosition.AsLastChild);
