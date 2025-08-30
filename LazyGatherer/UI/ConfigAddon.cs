@@ -14,7 +14,11 @@ public class ConfigAddon : NativeAddon
     private CheckboxNode displayYieldNode = null!;
     private CheckboxNode oneTurnNode = null!;
     private TextNode calculatorLabelNode = null!;
+
     private TextDropDownNode calculatorNode = null!;
+
+    // TODO improve this
+    private readonly List<String> calculatorOptions = ["Max yield", "Max yield per GP"];
     // private SliderNode gpNode = null!;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
@@ -82,12 +86,10 @@ public class ConfigAddon : NativeAddon
             Size = new Vector2(250, 24),
             Position = new Vector2(10, 125),
             // MaxListOptions = 2,
-            Options = ["Max yield", "Max yield per GP"],
+            Options = calculatorOptions,
             OnOptionSelected = (selectedItem) =>
             {
-                // TODO improve this
-                var indexOf = new List<String> { "Max yield", "Max yield per GP" }.IndexOf(selectedItem);
-                Service.Config.YieldCalculator = indexOf;
+                Service.Config.YieldCalculator = calculatorOptions.IndexOf(selectedItem);
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ReloadContext();
                 Service.UIController.Update(true);
@@ -121,8 +123,6 @@ public class ConfigAddon : NativeAddon
         displayNode.IsChecked = Service.Config.Display;
         displayYieldNode.IsChecked = Service.Config.DisplayEstimatedYield;
         oneTurnNode.IsChecked = Service.Config.OneTurnRotation;
-        // TODO improve this
-        calculatorNode.SelectedOption =
-            new List<String> { "Max yield", "Max yield per GP" }[Service.Config.YieldCalculator];
+        calculatorNode.SelectedOption = calculatorOptions[Service.Config.YieldCalculator];
     }
 }
