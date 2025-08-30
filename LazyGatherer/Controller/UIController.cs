@@ -60,24 +60,29 @@ public class UIController(List<KeyValuePair<Rotation, GatheringOutcome>> outcome
             return;
         }
 
-        cog = new CircleButtonNode()
+        cog = new CircleButtonNode
         {
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
             Icon = ButtonIcon.GearCog,
             Tooltip = "LazyGatherer Configuration",
             IsVisible = true,
-            OnClick = () => Service.ConfigController.ToggleConfigWindow(),
+            OnClick = () => Service.ConfigAddon.Toggle(),
         };
 
-        eye = new CircleButtonNode()
+        eye = new CircleButtonNode
         {
             Position = new Vector2(428.0f, 8.0f),
             Size = new Vector2(24f, 24f),
             Icon = ButtonIcon.Eye,
             Tooltip = "LazyGatherer display",
             IsVisible = true,
-            OnClick = () => Service.ConfigController.ToggleDisplay(),
+            OnClick = () =>
+            {
+                Service.Config.Display = !Service.Config.Display;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.UIController.Update(false);
+            },
         };
 
         // Attach the cog and eye buttons to the Gathering Addon root node
