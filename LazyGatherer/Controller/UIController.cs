@@ -23,58 +23,11 @@ public class UIController : IDisposable
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringPostSetup);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringPreFinalize);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, "Gathering", OnGatheringPostUpdate);
-    }
 
-    private unsafe void OnGatheringPostSetup(AddonEvent ev, AddonArgs args)
-    {
-        var gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
-        if (gatheringAddon == null)
-            return;
-
-        Service.NativeController.AttachNode(cog = new CircleButtonNode
+        if (Service.GameGui.GetAddonByName("Gathering").Address is not 0)
         {
-            Position = new Vector2(450.0f, 8.0f),
-            Size = new Vector2(24f, 24f),
-            Icon = ButtonIcon.GearCog,
-            Tooltip = "LazyGatherer Configuration",
-            IsVisible = true,
-            OnClick = () => Service.ConfigAddon.Toggle(),
-        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
-
-
-        Service.NativeController.AttachNode(eye = new CircleButtonNode
-        {
-            Position = new Vector2(428.0f, 8.0f),
-            Size = new Vector2(24f, 24f),
-            Icon = ButtonIcon.Eye,
-            Tooltip = "LazyGatherer display",
-            IsVisible = true,
-            OnClick = () =>
-            {
-                Service.Config.Display = !Service.Config.Display;
-                Service.Interface.SavePluginConfig(Service.Config);
-                Service.UIController.UpdateRotations();
-            }
-        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
-    }
-
-    private void OnGatheringPreFinalize(AddonEvent ev, AddonArgs args)
-    {
-        if (cog != null)
-        {
-            Service.NativeController.DetachNode(cog);
-            cog.Dispose();
-            cog = null;
+            InitUI();
         }
-
-        if (eye != null)
-        {
-            Service.NativeController.DetachNode(eye);
-            eye.Dispose();
-            eye = null;
-        }
-
-        ClearRotations();
     }
 
     public void Dispose()
@@ -82,8 +35,11 @@ public class UIController : IDisposable
         Service.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringPostSetup);
         Service.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringPreFinalize);
         Service.AddonLifecycle.UnregisterListener(AddonEvent.PostUpdate, "Gathering", OnGatheringPostUpdate);
-        ClearRotations();
+        ClearUI();
     }
+
+    private void OnGatheringPostSetup(AddonEvent ev, AddonArgs args) => InitUI();
+    private void OnGatheringPreFinalize(AddonEvent ev, AddonArgs args) => ClearUI();
 
     public unsafe void OnGatheringPostUpdate(AddonEvent ev, AddonArgs args)
     {
@@ -137,5 +93,57 @@ public class UIController : IDisposable
 
         rotationNodes.ForEach(r => r.Dispose());
         rotationNodes.Clear();
+    }
+
+    private unsafe void InitUI()
+    {
+        var gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
+        if (gatheringAddon == null)
+            return;
+
+        Service.NativeController.AttachNode(cog = new CircleButtonNode
+        {
+            Position = new Vector2(450.0f, 8.0f),
+            Size = new Vector2(24f, 24f),
+            Icon = ButtonIcon.GearCog,
+            Tooltip = "LazyGatherer Configuration",
+            IsVisible = true,
+            OnClick = () => Service.ConfigAddon.Toggle(),
+        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
+
+
+        Service.NativeController.AttachNode(eye = new CircleButtonNode
+        {
+            Position = new Vector2(428.0f, 8.0f),
+            Size = new Vector2(24f, 24f),
+            Icon = ButtonIcon.Eye,
+            Tooltip = "LazyGatherer display",
+            IsVisible = true,
+            OnClick = () =>
+            {
+                Service.Config.Display = !Service.Config.Display;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.UIController.UpdateRotations();
+            }
+        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
+    }
+
+    private void ClearUI()
+    {
+        if (cog != null)
+        {
+            Service.NativeController.DetachNode(cog);
+            cog.Dispose();
+            cog = null;
+        }
+
+        if (eye != null)
+        {
+            Service.NativeController.DetachNode(eye);
+            eye.Dispose();
+            eye = null;
+        }
+
+        ClearRotations();
     }
 }
