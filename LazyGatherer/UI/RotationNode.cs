@@ -36,7 +36,7 @@ public sealed class RotationNode : SimpleComponentNode
             Position = new Vector2(4f + (44 * index), 26),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             FontSize = 14,
-            Text = $"Expected yield: {Math.Round(outcome.Value.Yield, 1)} for {outcome.Value.UsedGp} GP",
+            SeString = $"Expected yield: {Math.Round(outcome.Value.Yield, 1)} for {outcome.Value.UsedGp} GP",
             IsVisible = true,
         };
         Service.NativeController.AttachNode(expectedYieldNode, this, NodePosition.AsLastChild);

@@ -50,7 +50,7 @@ public sealed class ActionNode : SimpleComponentNode
             AlignmentType = AlignmentType.Right,
             Position = new Vector2(4f, 4f),
             Size = new Vector2(40, 14),
-            Text = $"x{count}",
+            SeString = $"x{count}",
             TextFlags = TextFlags.Edge,
             FontSize = 14,
             IsVisible = count > 1
