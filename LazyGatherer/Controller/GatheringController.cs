@@ -14,61 +14,62 @@ namespace LazyGatherer.Controller;
 
 public class GatheringController : IDisposable
 {
-    public readonly List<KeyValuePair<Rotation, GatheringOutcome>> GatheringOutcomes = [];
+    // public readonly List<KeyValuePair<Rotation, GatheringOutcome>> GatheringOutcomes = [];
 
     private const uint BaseNodeItemId = 17;
     private readonly RotationGenerator rotationGenerator = new();
-    private bool nodeOpened;
+    private bool firstDraw;
 
     public unsafe GatheringController()
     {
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringNodeOpening);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeClosing);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PostDraw, "Gathering", OnGatheringNodeEvent);
+        Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeEvent);
 
         // If Gathering addon is already opened
         var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
-        nodeOpened = addon != null;
+        firstDraw = addon != null;
     }
 
-    public void OnGatheringNodeOpening(AddonEvent addonEvent, AddonArgs addonArgs)
+    public void OnGatheringNodeEvent(AddonEvent ev, AddonArgs args)
     {
-        nodeOpened = true;
+        switch (ev)
+        {
+            case AddonEvent.PostDraw when firstDraw:
+                ComputeRotations();
+                break;
+            case AddonEvent.PreFinalize:
+                firstDraw = true;
+                break;
+        }
     }
 
-    public void OnGatheringNodeClosing(AddonEvent addonEvent, AddonArgs addonArgs)
+    public unsafe void ComputeRotations()
     {
-        nodeOpened = false;
-        if (GatheringOutcomes.Count != 0)
-            GatheringOutcomes.Clear();
-    }
-
-    public unsafe void OnFrameworkUpdate()
-    {
-        // Check Gathering addon is opened or context isn't already loaded
-        if (!nodeOpened || GatheringOutcomes.Count != 0)
-            return;
-
         // init context
         var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
+        if (addon == null || !addon->IsVisible) return;
         var contexts = GetGatheringContexts(addon);
+        if (contexts.Count == 0) return;
+        firstDraw = false;
+        List<KeyValuePair<Rotation, GatheringOutcome>> gatheringOutcomes = [];
         foreach (var gatheringContext in contexts)
         {
             var bestOutcome = this.GetBestOutcome(gatheringContext);
             Service.Log.Debug(bestOutcome.Key.ToString(gatheringContext));
-            GatheringOutcomes.Add(bestOutcome);
+            gatheringOutcomes.Add(bestOutcome);
         }
+
+        Service.UIController.DrawRotations(gatheringOutcomes);
     }
 
     public void Dispose()
     {
-        Service.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringNodeOpening);
-        Service.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeClosing);
+        Service.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringNodeEvent);
     }
 
     private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon)
     {
         var itemsId = addon->ItemIds;
-        Service.Log.Debug($"Items id {string.Join(", ", itemsId.ToArray())}");
 
         List<GatheringContext> contexts = [];
         // Player info
@@ -132,7 +133,7 @@ public class GatheringController : IDisposable
                 Job = job,
                 OneTurnRotation = Service.Config.OneTurnRotation
             };
-            Service.Log.Debug($"{gatheringContext}");
+            Service.Log.Verbose($"{gatheringContext}");
             contexts.Add(gatheringContext);
         }
 
@@ -176,10 +177,5 @@ public class GatheringController : IDisposable
     private static GatheringItem GetGatheringItemById(uint id)
     {
         return Service.DataManager.GetExcelSheet<GatheringItem>().FirstOrDefault(x => x.Item.RowId == id);
-    }
-
-    public void ReloadContext()
-    {
-        GatheringOutcomes.Clear();
     }
 }

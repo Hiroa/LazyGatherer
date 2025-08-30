@@ -1,6 +1,5 @@
 ﻿using System.Numerics;
 using Dalamud.Plugin;
-using Dalamud.Plugin.Services;
 using KamiToolKit;
 using LazyGatherer.Controller;
 using LazyGatherer.Models;
@@ -17,7 +16,7 @@ namespace LazyGatherer
 
             Service.Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
             Service.GatheringController = new GatheringController();
-            Service.UIController = new UIController(Service.GatheringController.GatheringOutcomes);
+            Service.UIController = new UIController();
 
             Service.ConfigAddon = new ConfigAddon
             {
@@ -29,23 +28,15 @@ namespace LazyGatherer
             };
 
             Service.Interface.UiBuilder.OpenConfigUi += OpenConfig;
-            Service.Framework.Update += OnFrameworkUpdate;
         }
 
         public void Dispose()
         {
-            Service.Framework.Update -= OnFrameworkUpdate;
             Service.Interface.UiBuilder.OpenConfigUi -= OpenConfig;
             Service.ConfigAddon.Dispose();
             Service.UIController.Dispose();
             Service.GatheringController.Dispose();
             Service.NativeController.Dispose();
-        }
-
-        private void OnFrameworkUpdate(IFramework framework)
-        {
-            Service.GatheringController.OnFrameworkUpdate();
-            Service.UIController.OnFrameworkUpdate();
         }
 
         private static void OpenConfig()

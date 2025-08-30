@@ -32,7 +32,7 @@ public sealed class RotationNode : SimpleComponentNode
             index++;
         }
 
-        AttachNode(new TextNode
+        AttachNode(expectedYieldNode = new TextNode
         {
             Position = new Vector2(4f + (44 * index), 26),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,

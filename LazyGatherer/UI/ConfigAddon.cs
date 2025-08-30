@@ -32,7 +32,7 @@ public class ConfigAddon : NativeAddon
             {
                 Service.Config.Display = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
-                Service.UIController.Update(false);
+                Service.UIController.UpdateRotations();
             }
         });
 
@@ -47,11 +47,11 @@ public class ConfigAddon : NativeAddon
             {
                 Service.Config.DisplayEstimatedYield = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
-                Service.UIController.Update(false);
+                Service.UIController.UpdateRotations();
             }
         });
 
-        AttachNode(oneTurnNode = new CheckboxNode()
+        AttachNode(oneTurnNode = new CheckboxNode
         {
             SeString = "One turn rotation",
             IsChecked = Service.Config.OneTurnRotation,
@@ -62,8 +62,7 @@ public class ConfigAddon : NativeAddon
             {
                 Service.Config.OneTurnRotation = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
-                Service.GatheringController.ReloadContext();
-                Service.UIController.Update(true);
+                Service.GatheringController.ComputeRotations();
             }
         });
 
@@ -88,8 +87,7 @@ public class ConfigAddon : NativeAddon
             {
                 Service.Config.YieldCalculator = calculatorOptions.IndexOf(selectedItem);
                 Service.Interface.SavePluginConfig(Service.Config);
-                Service.GatheringController.ReloadContext();
-                Service.UIController.Update(true);
+                Service.GatheringController.ComputeRotations();
             },
         });
         calculatorNode.OptionListNode.ScrollBarNode.IsVisible = false;
