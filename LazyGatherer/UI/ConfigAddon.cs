@@ -10,66 +10,64 @@ namespace LazyGatherer.UI;
 
 public class ConfigAddon : NativeAddon
 {
-    private CheckboxNode displayNode = null!;
-    private CheckboxNode displayYieldNode = null!;
-    private CheckboxNode oneTurnNode = null!;
-    private TextNode calculatorLabelNode = null!;
+    private CheckboxNode? displayNode;
+    private CheckboxNode? displayYieldNode;
+    private CheckboxNode? oneTurnNode;
 
-    private TextDropDownNode calculatorNode = null!;
+    private TextDropDownNode? calculatorNode;
 
     // TODO improve this
     private readonly List<String> calculatorOptions = ["Max yield", "Max yield per GP"];
-    // private SliderNode gpNode = null!;
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
-        displayNode = new CheckboxNode()
+        AttachNode(displayNode = new CheckboxNode
         {
             SeString = "Display Rotation",
             IsChecked = Service.Config.Display,
             IsVisible = true,
             Size = new Vector2(150, 20),
             Position = new Vector2(10, 45),
-            OnClick = (isChecked) =>
+            OnClick = isChecked =>
             {
                 Service.Config.Display = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update(false);
             }
-        };
+        });
 
-        displayYieldNode = new CheckboxNode()
+        AttachNode(displayYieldNode = new CheckboxNode
         {
             SeString = "Display estimated yield",
             IsChecked = Service.Config.DisplayEstimatedYield,
             IsVisible = true,
             Size = new Vector2(150, 20),
             Position = new Vector2(10, 65),
-            OnClick = (isChecked) =>
+            OnClick = isChecked =>
             {
                 Service.Config.DisplayEstimatedYield = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update(false);
             }
-        };
+        });
 
-        oneTurnNode = new CheckboxNode()
+        AttachNode(oneTurnNode = new CheckboxNode()
         {
             SeString = "One turn rotation",
             IsChecked = Service.Config.OneTurnRotation,
             IsVisible = true,
             Size = new Vector2(150, 20),
             Position = new Vector2(10, 85),
-            OnClick = (isChecked) =>
+            OnClick = isChecked =>
             {
                 Service.Config.OneTurnRotation = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ReloadContext();
                 Service.UIController.Update(true);
             }
-        };
+        });
 
-        calculatorLabelNode = new TextNode()
+        AttachNode(new TextNode
         {
             SeString = "Rotation calculator:",
             TextColor = ColorHelper.GetColor(8),
@@ -78,51 +76,34 @@ public class ConfigAddon : NativeAddon
             Size = new Vector2(200, 20),
             FontSize = 14,
             Position = new Vector2(10, 105),
-        };
+        });
 
-        calculatorNode = new TextDropDownNode()
+        AttachNode(calculatorNode = new TextDropDownNode
         {
             IsVisible = true,
             Size = new Vector2(250, 24),
             Position = new Vector2(10, 125),
-            // MaxListOptions = 2,
             Options = calculatorOptions,
-            OnOptionSelected = (selectedItem) =>
+            OnOptionSelected = selectedItem =>
             {
                 Service.Config.YieldCalculator = calculatorOptions.IndexOf(selectedItem);
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ReloadContext();
                 Service.UIController.Update(true);
             },
-        };
-
-        // gpNode = new SliderNode()
-        // {
-        //     Size = new Vector2(250, 16),
-        //     Position = new Vector2(10, 155),
-        //     IsVisible = true,
-        //     Min = 0,
-        //     Max = (int)Service.ClientState.LocalPlayer!.MaxGp,
-        //     Step = 50,
-        // };
-        // // Fix slider button size and position
-        // gpNode.SliderForegroundButtonNode.Size = new Vector2(14.0f, 15.0f);
-        // gpNode.SliderForegroundButtonNode.Position = new Vector2(0f, 1f);
-
-
-        AttachNode(displayNode);
-        AttachNode(displayYieldNode);
-        AttachNode(oneTurnNode);
-        AttachNode(calculatorLabelNode);
-        AttachNode(calculatorNode);
-        // AttachNode(gpNode);
+        });
+        calculatorNode.OptionListNode.ScrollBarNode.IsVisible = false;
     }
 
     protected override unsafe void OnUpdate(AtkUnitBase* addon)
     {
-        displayNode.IsChecked = Service.Config.Display;
-        displayYieldNode.IsChecked = Service.Config.DisplayEstimatedYield;
-        oneTurnNode.IsChecked = Service.Config.OneTurnRotation;
-        calculatorNode.SelectedOption = calculatorOptions[Service.Config.YieldCalculator];
+        if (displayNode != null)
+            displayNode.IsChecked = Service.Config.Display;
+        if (displayYieldNode != null)
+            displayYieldNode.IsChecked = Service.Config.DisplayEstimatedYield;
+        if (oneTurnNode != null)
+            oneTurnNode.IsChecked = Service.Config.OneTurnRotation;
+        if (calculatorNode != null)
+            calculatorNode.SelectedOption = calculatorOptions[Service.Config.YieldCalculator];
     }
 }
