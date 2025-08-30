@@ -3,7 +3,7 @@
 
     <PropertyGroup>
         <Authors>Hiroa</Authors>
-        <Version>0.0.0.4</Version>
+        <Version>0.0.0.5</Version>
         <Description>Display the optimal rotation for maximum yield with your current GP.</Description>
         <PackageProjectUrl>https://github.com/Hiroa/LazyGatherer</PackageProjectUrl>
     </PropertyGroup>
