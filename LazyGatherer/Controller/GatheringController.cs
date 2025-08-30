@@ -20,6 +20,9 @@ public class GatheringController : IDisposable
     private readonly RotationGenerator rotationGenerator = new();
     private bool firstDraw;
 
+    private List<RotationComparer> rotationComparers =
+        [new GatheringMaxYieldComparer(), new GatheringEfficiencyComparer()];
+
     public unsafe GatheringController()
     {
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostDraw, "Gathering", OnGatheringNodeEvent);
@@ -169,9 +172,9 @@ public class GatheringController : IDisposable
             var outcome = GatheringCalculator.CalculateOutcome(r, baseOutcome);
             rotationOutcomes[r] = outcome;
         });
-        return Service.Config.YieldCalculator == 0
-                   ? rotationOutcomes.MaxBy(kv => kv.Value, new GatheringMaxYieldComparer())
-                   : rotationOutcomes.MaxBy(kv => kv.Value, new GatheringEfficiencyComparer());
+
+        var rotationComparer = rotationComparers.First(it => it.Name == Service.Config.RotationCalculator);
+        return rotationOutcomes.MaxBy(kv => kv.Value, rotationComparer);
     }
 
     private static GatheringItem GetGatheringItemById(uint id)

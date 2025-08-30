@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using LazyGatherer.Solver.Data;
+﻿using LazyGatherer.Solver.Data;
 
 namespace LazyGatherer.Solver.Comparator
 {
-    public class GatheringMaxYieldComparer : IComparer<GatheringOutcome>
+    public class GatheringMaxYieldComparer() : RotationComparer("Max yield")
     {
         private readonly DoubleEpsilonComparer doubleComparer = new(1e-6);
 
-        public int Compare(GatheringOutcome? x, GatheringOutcome? y)
+        public override int Compare(GatheringOutcome? x, GatheringOutcome? y)
         {
             switch (x)
             {

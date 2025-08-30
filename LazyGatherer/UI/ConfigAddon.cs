@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
@@ -17,7 +16,7 @@ public class ConfigAddon : NativeAddon
     private TextDropDownNode? calculatorNode;
 
     // TODO improve this
-    private readonly List<String> calculatorOptions = ["Max yield", "Max yield per GP"];
+    private readonly List<string> calculatorOptions = ["Max yield", "Max yield per GP"];
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
@@ -77,15 +76,17 @@ public class ConfigAddon : NativeAddon
             Position = new Vector2(10, 105),
         });
 
+        Service.Log.Info("OnSetup");
         AttachNode(calculatorNode = new TextDropDownNode
         {
             IsVisible = true,
             Size = new Vector2(250, 24),
             Position = new Vector2(10, 125),
             Options = calculatorOptions,
+            SelectedOption = Service.Config.RotationCalculator,
             OnOptionSelected = selectedItem =>
             {
-                Service.Config.YieldCalculator = calculatorOptions.IndexOf(selectedItem);
+                Service.Config.RotationCalculator = selectedItem;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
@@ -97,11 +98,5 @@ public class ConfigAddon : NativeAddon
     {
         if (displayNode != null)
             displayNode.IsChecked = Service.Config.Display;
-        if (displayYieldNode != null)
-            displayYieldNode.IsChecked = Service.Config.DisplayEstimatedYield;
-        if (oneTurnNode != null)
-            oneTurnNode.IsChecked = Service.Config.OneTurnRotation;
-        if (calculatorNode != null)
-            calculatorNode.SelectedOption = calculatorOptions[Service.Config.YieldCalculator];
     }
 }
