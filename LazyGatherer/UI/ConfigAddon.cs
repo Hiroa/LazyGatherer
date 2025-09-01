@@ -10,8 +10,6 @@ namespace LazyGatherer.UI;
 public class ConfigAddon : NativeAddon
 {
     private CheckboxNode? displayNode;
-    private CheckboxNode? displayYieldNode;
-    private CheckboxNode? oneTurnNode;
 
     private TextDropDownNode? calculatorNode;
 
@@ -35,7 +33,7 @@ public class ConfigAddon : NativeAddon
             }
         });
 
-        AttachNode(displayYieldNode = new CheckboxNode
+        AttachNode(new CheckboxNode
         {
             SeString = "Display estimated yield",
             IsChecked = Service.Config.DisplayEstimatedYield,
@@ -50,7 +48,7 @@ public class ConfigAddon : NativeAddon
             }
         });
 
-        AttachNode(oneTurnNode = new CheckboxNode
+        AttachNode(new CheckboxNode
         {
             SeString = "One turn rotation",
             IsChecked = Service.Config.OneTurnRotation,
