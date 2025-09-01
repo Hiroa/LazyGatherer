@@ -2,8 +2,8 @@
 {
     public class GatheringOutcome
     {
-        public int UsedGp { get; set; }
-        public double Yield { get; set; }
+        public int UsedGp { get; init; }
+        public double Yield { get; init; }
         public double AddYieldPerGp { get; set; }
     }
 }

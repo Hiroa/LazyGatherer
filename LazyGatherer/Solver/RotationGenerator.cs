@@ -13,8 +13,8 @@ namespace LazyGatherer.Solver
 
         public RotationGenerator()
         {
-            availableActions = new List<BaseAction>();
-            rotations = new List<Rotation>();
+            availableActions = [];
+            rotations = [];
             foreach (var t in GetType().Assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(BaseAction))))
             {
                 if (t.IsAbstract) continue;

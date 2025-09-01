@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Dalamud.Utility;
 using LazyGatherer.Models;
@@ -6,17 +7,11 @@ using LazyGatherer.Solver.Actions;
 
 namespace LazyGatherer.Solver.Models
 {
-    public class Rotation
+    public class Rotation(GatheringContext context)
     {
-        public Rotation(GatheringContext context)
-        {
-            Context = context;
-            Actions = new List<BaseAction>();
-        }
+        public List<BaseAction> Actions { get; } = [];
 
-        public List<BaseAction> Actions { get; }
-
-        public GatheringContext Context { get; }
+        public GatheringContext Context { get; } = context;
 
         public void AddAction(BaseAction action)
         {
@@ -43,7 +38,7 @@ namespace LazyGatherer.Solver.Models
                 {
                     Job.Bot => action.BotanistAction,
                     Job.Min => action.MinerAction,
-                    _ => action.MinerAction
+                    _ => throw new ArgumentOutOfRangeException()
                 };
                 sb.Append(igAction.Name)
                   .Append(" (")

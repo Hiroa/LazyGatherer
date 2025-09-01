@@ -12,7 +12,7 @@ public class GatheringContext
 
     public required Item Item { get; init; }
 
-    // Available GP fro this gathering
+    // Available GP for this gathering
     public required int AvailableGp { get; set; }
 
     // Base amount harvested by attempts (with node bonus)
@@ -47,7 +47,7 @@ public class GatheringContext
     public Job Job { get; init; }
 
     // Tells if the rotation is a one turn rotation
-    public bool OneTurnRotation { get; set; }
+    public bool OneTurnRotation { get; init; }
 
     // Tells if yield1/2 has been used
     public bool YieldUsed { get; set; }
