@@ -5,6 +5,7 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using LazyGatherer.Components;
 using LazyGatherer.Solver;
 using LazyGatherer.Solver.Comparator;
 using LazyGatherer.Solver.Data;
@@ -14,46 +15,42 @@ namespace LazyGatherer.Controller;
 
 public class GatheringController : IDisposable
 {
-    // public readonly List<KeyValuePair<Rotation, GatheringOutcome>> GatheringOutcomes = [];
-
-    private const uint BaseNodeItemId = 17;
     private readonly RotationGenerator rotationGenerator = new();
-    private bool firstDraw;
+    private bool rotationAlreadyComputed;
 
-    private List<RotationComparer> rotationComparers =
+    private readonly List<RotationComparer> rotationComparers =
         [new GatheringMaxYieldComparer(), new GatheringEfficiencyComparer()];
 
-    public unsafe GatheringController()
+    public GatheringController()
     {
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostDraw, "Gathering", OnGatheringNodeEvent);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeEvent);
-
-        // If Gathering addon is already opened
-        var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
-        firstDraw = addon != null;
     }
 
     public void OnGatheringNodeEvent(AddonEvent ev, AddonArgs args)
     {
         switch (ev)
         {
-            case AddonEvent.PostDraw when firstDraw:
+            case AddonEvent.PostDraw when !rotationAlreadyComputed:
                 ComputeRotations();
                 break;
             case AddonEvent.PreFinalize:
-                firstDraw = true;
+                rotationAlreadyComputed = false;
                 break;
         }
     }
 
     public unsafe void ComputeRotations()
     {
-        // init context
+        // Check if addon is fully loaded
         var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
-        if (addon == null || !addon->IsVisible) return;
+        if (!IsGatheringAddonLoaded(addon)) return;
+
+        // Get context for each item
         var contexts = GetGatheringContexts(addon);
         if (contexts.Count == 0) return;
-        firstDraw = false;
+
+        // Compute the best rotation for each item
         List<KeyValuePair<Rotation, GatheringOutcome>> gatheringOutcomes = [];
         foreach (var gatheringContext in contexts)
         {
@@ -62,7 +59,9 @@ public class GatheringController : IDisposable
             gatheringOutcomes.Add(bestOutcome);
         }
 
+        // Update UI
         Service.UIController.DrawRotations(gatheringOutcomes);
+        rotationAlreadyComputed = true;
     }
 
     public void Dispose()
@@ -78,7 +77,6 @@ public class GatheringController : IDisposable
         // Player info
         var uiState = UIState.Instance();
         var playerGathering = uiState->PlayerState.Attributes[72];
-        Service.Log.Verbose($"Player has {playerGathering} gathering");
         var player = Service.ClientState.LocalPlayer;
         var job = (Job)player!.ClassJob.Value.RowId;
 
@@ -87,50 +85,37 @@ public class GatheringController : IDisposable
             // Ignore empty node
             var itemId = itemsId[i];
             if (itemId == 0) continue;
-            Service.Log.Verbose($"Item id {itemId}");
 
-            // Ignore unique object
             var item = Service.DataManager.GetExcelSheet<Item>().GetRow(itemId);
-            Service.Log.Verbose($"Item is unique: {item.IsUnique}");
-            if (item.IsUnique) continue;
 
-            // Ignore collectable Object
-            Service.Log.Verbose($"Item is collectable: {item.IsCollectable}");
-            if (item.IsCollectable) continue;
-
-            // Ignore seeds(20) and soil(21) (More consistent than checking for rare tag)
-            if (item.FilterGroup is 20 or 21) continue;
+            // Ignore unique, collectable, seeds(20) and soil(21) (More consistent than checking for rare tag)
+            if (item.IsUnique ||
+                item.IsCollectable ||
+                item.FilterGroup is 20 or 21) continue;
 
             // Context info from gui
-            var itemRow = addon->UldManager.SearchNodeById((uint)(BaseNodeItemId + i));
+            var itemComponent = new GatheringItemComponent(addon, i);
 
             // Ignore rare Object
-            var isRare =
-                itemRow->GetComponent()->UldManager.SearchNodeById(7)->IsVisible(); //Not consistent if rare and hidden
-            Service.Log.Verbose($"Item is rare: {isRare}");
-            if (isRare) continue; // Nothing impact the gathering outcome for rare item
-
-            var chanceNode = itemRow->GetComponent()->UldManager.SearchNodeById(10)->GetAsAtkTextNode()->NodeText;
-            var boonChanceNode = itemRow->GetComponent()->UldManager.SearchNodeById(16)->GetAsAtkTextNode()->NodeText;
-            var iconNode = itemRow->GetComponent()->UldManager.SearchNodeById(31);
-            var baseAmount = iconNode->GetComponent()->UldManager.SearchNodeById(7)->GetAsAtkTextNode()->NodeText;
+            // Not consistent if rare and hidden
+            if (itemComponent.IsRare) continue; // Nothing impact the gathering outcome for rare item
 
             // Context info from data
-            var gathering = GetRequiredGathering(itemId);
+            var gatheringRequired = GetRequiredGathering(itemId);
 
             // Compute bountifulBonus
-            var bountifulBonus = ComputeBountifulBonus(playerGathering, gathering);
+            var bountifulBonus = ComputeBountifulBonus(playerGathering, gatheringRequired);
 
             var gatheringContext = new GatheringContext
             {
                 RowId = (uint)i,
                 Item = item,
                 AvailableGp = (int)player.CurrentGp,
-                BaseAmount = baseAmount.EqualToString("") ? 1 : baseAmount.ToInteger(),
-                Chance = chanceNode.ToInteger() / 100.0,
+                BaseAmount = itemComponent.BaseAmount,
+                Chance = itemComponent.GatheringChance / 100.0,
                 Attempts = addon->IntegrityLeftover->NodeText.ToInteger(),
-                HasBoon = !boonChanceNode.EqualToString("-"),
-                Boon = boonChanceNode.EqualToString("-") ? 0 : boonChanceNode.ToInteger() / 100.0,
+                HasBoon = itemComponent.HasBoon,
+                Boon = itemComponent.BoonChance / 100.0,
                 BountifulBonus = bountifulBonus,
                 CharacterLevel = player.Level,
                 Job = job,
@@ -143,14 +128,21 @@ public class GatheringController : IDisposable
         return contexts;
     }
 
-    private static int ComputeBountifulBonus(int playerGathering, ushort gathering)
+    private static unsafe bool IsGatheringAddonLoaded(AddonGathering* addon)
     {
-        if (playerGathering > gathering * 1.1)
-        {
-            return 3;
-        }
+        return addon != null
+               && addon->IsVisible
+               && addon->ItemIds.ToArray().ToList().Any(id => id != 0);
+    }
 
-        return playerGathering > gathering * 0.9 ? 2 : 1;
+    private static int ComputeBountifulBonus(int playerGathering, ushort gatheringRequired)
+    {
+        return playerGathering switch
+        {
+            _ when playerGathering > gatheringRequired * 1.1 => 3,
+            _ when playerGathering > gatheringRequired * 0.9 => 2,
+            _ => 1
+        };
     }
 
     private static ushort GetRequiredGathering(uint itemId)
@@ -158,8 +150,7 @@ public class GatheringController : IDisposable
         var gItem = GetGatheringItemById(itemId);
         var itemLvlId = gItem.GatheringItemLevel.Value.RowId;
         var itemLevel = Service.DataManager.Excel.GetSheet<ItemLevel>().GetRow(itemLvlId);
-        var gathering = itemLevel.Gathering;
-        return gathering;
+        return itemLevel.Gathering;
     }
 
     private KeyValuePair<Rotation, GatheringOutcome> GetBestOutcome(GatheringContext context)
@@ -167,11 +158,7 @@ public class GatheringController : IDisposable
         var rotations = rotationGenerator.GetRotations(context);
         var baseOutcome = GatheringCalculator.CalculateOutcome(rotations[0]);
         var rotationOutcomes = new Dictionary<Rotation, GatheringOutcome>();
-        rotations.ForEach(r =>
-        {
-            var outcome = GatheringCalculator.CalculateOutcome(r, baseOutcome);
-            rotationOutcomes[r] = outcome;
-        });
+        rotations.ForEach(r => { rotationOutcomes[r] = GatheringCalculator.CalculateOutcome(r, baseOutcome); });
 
         var rotationComparer = rotationComparers.First(it => it.Name == Service.Config.RotationCalculator);
         return rotationOutcomes.MaxBy(kv => kv.Value, rotationComparer);
