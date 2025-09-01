@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
@@ -15,8 +16,8 @@ namespace LazyGatherer.Controller;
 public class UIController : IDisposable
 {
     private readonly List<RotationNode> rotationNodes = [];
-    private CircleButtonNode? cog;
-    private CircleButtonNode? eye;
+    private CircleButtonNode? configButtonNode;
+    private CircleButtonNode? displayButtonNode;
 
     public UIController()
     {
@@ -49,13 +50,13 @@ public class UIController : IDisposable
             return;
         }
 
-        foreach (var rotationNode in rotationNodes)
+
+        // Hide while quick gathering
+        if (rotationNodes.Any(n => n.IsVisible) && addonGathering->GatherStatus == 2)
         {
-            // Hide while quick gathering
-            if (rotationNode.IsVisible && addonGathering->GatherStatus == 2)
-            {
-                rotationNode.IsVisible = false;
-            }
+            if (displayButtonNode is { IsVisible: true }) displayButtonNode.IsVisible = false;
+            if (configButtonNode is { IsVisible: true }) configButtonNode.IsVisible = false;
+            rotationNodes.ForEach(r => r.IsVisible = false);
         }
     }
 
@@ -101,7 +102,7 @@ public class UIController : IDisposable
         if (gatheringAddon == null)
             return;
 
-        Service.NativeController.AttachNode(cog = new CircleButtonNode
+        Service.NativeController.AttachNode(configButtonNode = new CircleButtonNode
         {
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
@@ -112,7 +113,7 @@ public class UIController : IDisposable
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
 
 
-        Service.NativeController.AttachNode(eye = new CircleButtonNode
+        Service.NativeController.AttachNode(displayButtonNode = new CircleButtonNode
         {
             Position = new Vector2(428.0f, 8.0f),
             Size = new Vector2(24f, 24f),
@@ -130,18 +131,18 @@ public class UIController : IDisposable
 
     private void ClearUI()
     {
-        if (cog != null)
+        if (configButtonNode != null)
         {
-            Service.NativeController.DetachNode(cog);
-            cog.Dispose();
-            cog = null;
+            Service.NativeController.DetachNode(configButtonNode);
+            configButtonNode.Dispose();
+            configButtonNode = null;
         }
 
-        if (eye != null)
+        if (displayButtonNode != null)
         {
-            Service.NativeController.DetachNode(eye);
-            eye.Dispose();
-            eye = null;
+            Service.NativeController.DetachNode(displayButtonNode);
+            displayButtonNode.Dispose();
+            displayButtonNode = null;
         }
 
         ClearRotations();
