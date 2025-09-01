@@ -7,7 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using LazyGatherer.Solver.Data;
+using LazyGatherer.Solver.Models;
 using LazyGatherer.UI;
 
 namespace LazyGatherer.Controller;

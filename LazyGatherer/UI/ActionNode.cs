@@ -3,8 +3,9 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.System;
+using LazyGatherer.Models;
 using LazyGatherer.Solver.Actions;
-using LazyGatherer.Solver.Data;
+using LazyGatherer.Solver.Models;
 
 namespace LazyGatherer.UI;
 

@@ -1,4 +1,4 @@
-﻿using LazyGatherer.Solver.Data;
+﻿using LazyGatherer.Solver.Models;
 using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Solver.Actions

@@ -1,4 +1,4 @@
-﻿using LazyGatherer.Solver.Data;
+﻿using LazyGatherer.Solver.Models;
 
 namespace LazyGatherer.Solver.Comparator
 {

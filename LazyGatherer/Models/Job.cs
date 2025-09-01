@@ -1,4 +1,4 @@
-﻿namespace LazyGatherer;
+﻿namespace LazyGatherer.Models;
 
 public enum Job
 {

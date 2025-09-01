@@ -1,5 +1,6 @@
 ﻿using Dalamud.Utility;
-using LazyGatherer.Solver.Data;
+using LazyGatherer.Models;
+using LazyGatherer.Solver.Models;
 using Action = Lumina.Excel.Sheets.Action;
 
 namespace LazyGatherer.Solver.Actions

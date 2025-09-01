@@ -1,5 +1,5 @@
 ﻿using System;
-using LazyGatherer.Solver.Data;
+using LazyGatherer.Solver.Models;
 using Action = Lumina.Excel.Sheets.Action;
 
 namespace LazyGatherer.Solver.Actions

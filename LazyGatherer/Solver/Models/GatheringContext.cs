@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Text;
+using LazyGatherer.Models;
 using Lumina.Excel.Sheets;
 
-namespace LazyGatherer.Solver.Data;
+namespace LazyGatherer.Solver.Models;
 
 public class GatheringContext
 {

@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 using Dalamud.Utility;
+using LazyGatherer.Models;
 using LazyGatherer.Solver.Actions;
 
-namespace LazyGatherer.Solver.Data
+namespace LazyGatherer.Solver.Models
 {
     public class Rotation
     {

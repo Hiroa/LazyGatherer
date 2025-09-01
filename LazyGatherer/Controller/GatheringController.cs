@@ -6,9 +6,10 @@ using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using LazyGatherer.Components;
+using LazyGatherer.Models;
 using LazyGatherer.Solver;
 using LazyGatherer.Solver.Comparator;
-using LazyGatherer.Solver.Data;
+using LazyGatherer.Solver.Models;
 using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Controller;

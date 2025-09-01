@@ -1,4 +1,4 @@
-﻿namespace LazyGatherer.Solver.Data
+﻿namespace LazyGatherer.Solver.Models
 {
     public class GatheringOutcome
     {
