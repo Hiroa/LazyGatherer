@@ -22,6 +22,7 @@ public sealed class ActionNode : SimpleComponentNode
         {
             Position = new Vector2(4f, 4f),
             Size = new Vector2(40, 40),
+            TextureSize = new Vector2(40, 40),
             IconId = GetGathererIconId(action, context),
             IsVisible = true
         });
