@@ -11,7 +11,7 @@ public class ConfigAddon : NativeAddon
 {
     private CheckboxNode? displayNode;
 
-    private TextDropDownNode? calculatorNode;
+    private TextListNode? calculatorNode;
 
     // TODO improve this
     private readonly List<string> calculatorOptions = ["Max yield", "Max yield per GP"];
@@ -74,14 +74,13 @@ public class ConfigAddon : NativeAddon
             Position = new Vector2(10, 105),
         });
 
-        Service.Log.Info("OnSetup");
-        AttachNode(calculatorNode = new TextDropDownNode
+        AttachNode(calculatorNode = new TextListNode()
         {
             IsVisible = true,
             Size = new Vector2(250, 24),
             Position = new Vector2(10, 125),
-            Options = calculatorOptions,
             SelectedOption = Service.Config.RotationCalculator,
+            Options = calculatorOptions,
             OnOptionSelected = selectedItem =>
             {
                 Service.Config.RotationCalculator = selectedItem;
@@ -89,7 +88,7 @@ public class ConfigAddon : NativeAddon
                 Service.GatheringController.ComputeRotations();
             },
         });
-        calculatorNode.OptionListNode.ScrollBarNode.IsVisible = false;
+        calculatorNode.ScrollBarNode.IsVisible = false;
     }
 
     protected override unsafe void OnUpdate(AtkUnitBase* addon)
