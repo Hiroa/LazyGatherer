@@ -59,6 +59,7 @@ public class UIController : IDisposable
         {
             if (displayButtonNode is { IsVisible: true }) displayButtonNode.IsVisible = false;
             if (configButtonNode is { IsVisible: true }) configButtonNode.IsVisible = false;
+            if (sliderNode is { IsVisible: true }) sliderNode.IsVisible = false;
             rotationNodes.ForEach(r => r.IsVisible = false);
         }
     }
