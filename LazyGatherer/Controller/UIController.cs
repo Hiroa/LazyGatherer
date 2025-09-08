@@ -131,7 +131,8 @@ public class UIController : IDisposable
             }
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
 
-        Service.NativeController.AttachNode(sliderNode = new GpSliderNode(1000)
+        var maxGp = Service.ClientState.LocalPlayer?.MaxGp ?? 1500;
+        Service.NativeController.AttachNode(sliderNode = new GpSliderNode((int)maxGp)
         {
             Position = new Vector2(320, 460),
             Size = new Vector2(200, 28),
