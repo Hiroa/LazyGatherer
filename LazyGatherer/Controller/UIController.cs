@@ -20,16 +20,13 @@ public class UIController : IDisposable
     private CircleButtonNode? displayButtonNode;
     private GpSliderNode? sliderNode;
 
+    private bool uiInitialized;
+
     public UIController()
     {
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringPostSetup);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringPreFinalize);
         Service.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, "Gathering", OnGatheringPostUpdate);
-
-        if (Service.GameGui.GetAddonByName("Gathering").Address is not 0)
-        {
-            InitUI();
-        }
     }
 
     public void Dispose()
@@ -51,6 +48,11 @@ public class UIController : IDisposable
             return;
         }
 
+        // If plugin is load during gathering
+        if (!uiInitialized)
+        {
+            InitUI();
+        }
 
         // Hide while quick gathering
         if (rotationNodes.Any(n => n.IsVisible) && addonGathering->GatherStatus == 2)
@@ -135,6 +137,7 @@ public class UIController : IDisposable
             Size = new Vector2(200, 28),
             IsVisible = true,
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
+        uiInitialized = true;
     }
 
     private void ClearUI()
@@ -161,5 +164,6 @@ public class UIController : IDisposable
         }
 
         ClearRotations();
+        uiInitialized = false;
     }
 }
