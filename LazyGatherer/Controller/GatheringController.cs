@@ -42,14 +42,14 @@ public class GatheringController : IDisposable
         }
     }
 
-    public unsafe void ComputeRotations()
+    public unsafe void ComputeRotations(int maxGpToUse = int.MaxValue)
     {
         // Check if addon is fully loaded
         var addon = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
         if (!IsGatheringAddonLoaded(addon)) return;
 
         // Get context for each item
-        var contexts = GetGatheringContexts(addon);
+        var contexts = GetGatheringContexts(addon, maxGpToUse);
         if (contexts.Count == 0) return;
 
         // Compute the best rotation for each item
@@ -71,7 +71,7 @@ public class GatheringController : IDisposable
         Service.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringNodeEvent);
     }
 
-    private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon)
+    private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon, int maxGpToUse)
     {
         var itemsId = addon->ItemIds;
 
@@ -80,6 +80,7 @@ public class GatheringController : IDisposable
         var uiState = UIState.Instance();
         var playerGathering = uiState->PlayerState.Attributes[72];
         var player = Service.ClientState.LocalPlayer;
+        var gpToUse = Math.Min((int)player!.CurrentGp, maxGpToUse);
         var job = (Job)player!.ClassJob.Value.RowId;
 
         for (var i = 0; i < 8; i++) // 8 items max by Gathering point
@@ -119,7 +120,7 @@ public class GatheringController : IDisposable
             {
                 RowId = (uint)i,
                 Item = item,
-                AvailableGp = (int)player.CurrentGp,
+                AvailableGp = gpToUse,
                 BaseAmount = itemComponent.BaseAmount,
                 Chance = itemComponent.GatheringChance / 100.0,
                 Attempts = addon->IntegrityLeftover->NodeText.ToInteger(),

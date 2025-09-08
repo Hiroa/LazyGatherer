@@ -3,7 +3,6 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Nodes.Slider;
-using KamiToolKit.System;
 
 namespace LazyGatherer.UI;
 
@@ -32,12 +31,10 @@ public class GpSliderNode : CustomNode
             Step = 50,
             Max = maxGp,
             Min = 0,
-            Value = maxGp
+            Value = maxGp,
+            OnValueChanged = value => { Service.GatheringController.ComputeRotations(value); }
         });
-    }
-
-    private void AttachNode(NodeBase node)
-    {
-        Service.NativeController.AttachNode(node, this, NodePosition.AsLastChild);
+        // Add a bit of spacing - personal preference
+        sliderNode.ValueNode.Position = new Vector2(sliderNode.Width - 22.0f, sliderNode.Height / 4.0f);
     }
 }
