@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Dalamud.Utility;
 using LazyGatherer.Models;
 using LazyGatherer.Solver.Actions;
 
@@ -30,7 +29,7 @@ namespace LazyGatherer.Solver.Models
         {
             var job = context.Job;
             var sb = new StringBuilder();
-            sb.Append(context.Item.Name.ToDalamudString())
+            sb.Append(context.Item.Name)
               .Append(" => ");
             foreach (var action in Actions)
             {

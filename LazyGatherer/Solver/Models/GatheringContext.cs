@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using LazyGatherer.Models;
-using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Solver.Models;
 
@@ -10,7 +9,7 @@ public class GatheringContext
     // Row on the addon
     public required uint RowId { get; init; }
 
-    public required Item Item { get; init; }
+    public required ItemBase Item { get; init; }
 
     // Available GP for this gathering
     public required int AvailableGp { get; set; }

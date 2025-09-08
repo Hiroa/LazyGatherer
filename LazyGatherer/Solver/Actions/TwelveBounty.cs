@@ -17,7 +17,7 @@ namespace LazyGatherer.Solver.Actions
         public override bool CanExecute(Rotation rotation)
         {
             var context = rotation.Context;
-            return base.CanExecute(rotation) && context.Item.ItemSearchCategory.RowId == 58; // Crystal
+            return base.CanExecute(rotation) && context.Item.ItemSearchCategoryId == 58; // Crystal
         }
 
         public override void Execute(GatheringContext context)

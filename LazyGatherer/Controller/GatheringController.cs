@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using LazyGatherer.Components;
@@ -84,15 +85,22 @@ public class GatheringController : IDisposable
         for (var i = 0; i < 8; i++) // 8 items max by Gathering point
         {
             // Ignore empty node
-            var itemId = itemsId[i];
+            var (itemId, itemKind) = ItemUtil.GetBaseId(itemsId[i]);
             if (itemId == 0) continue;
 
-            var item = Service.DataManager.GetExcelSheet<Item>().GetRow(itemId);
+            var item = itemKind switch
+            {
+                // Item mainly from levequests
+                ItemKind.EventItem =>
+                    ItemBase.FromLumina(Service.DataManager.GetExcelSheet<EventItem>().GetRow(itemId)),
+                // Normal, hq and collectible are in Item sheet
+                _ => ItemBase.FromLumina(Service.DataManager.GetExcelSheet<Item>().GetRow(itemId)),
+            };
 
             // Ignore unique, collectable, seeds(20) and soil(21) (More consistent than checking for rare tag)
             if (item.IsUnique ||
                 item.IsCollectable ||
-                item.FilterGroup is 20 or 21) continue;
+                item.FilterGroupId is 20 or 21) continue;
 
             // Context info from gui
             var itemComponent = new GatheringItemComponent(addon, i);
