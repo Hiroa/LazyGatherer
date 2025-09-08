@@ -63,8 +63,13 @@ public class UIController : IDisposable
         }
     }
 
-    public void UpdateRotations()
+    public void Update()
     {
+        if (sliderNode != null)
+        {
+            sliderNode.IsVisible = Service.Config.Display;
+        }
+
         rotationNodes.ForEach(r => r.Update());
     }
 
@@ -127,7 +132,7 @@ public class UIController : IDisposable
             {
                 Service.Config.Display = !Service.Config.Display;
                 Service.Interface.SavePluginConfig(Service.Config);
-                Service.UIController.UpdateRotations();
+                Service.UIController.Update();
             }
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
 
@@ -136,10 +141,11 @@ public class UIController : IDisposable
         {
             Position = new Vector2(320, 460),
             Size = new Vector2(200, 28),
-            IsVisible = true,
+            IsVisible = Service.Config.Display,
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
         uiInitialized = true;
     }
+
 
     private void ClearUI()
     {

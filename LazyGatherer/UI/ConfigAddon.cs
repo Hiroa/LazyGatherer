@@ -29,7 +29,7 @@ public class ConfigAddon : NativeAddon
             {
                 Service.Config.Display = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
-                Service.UIController.UpdateRotations();
+                Service.UIController.Update();
             }
         });
 
@@ -44,7 +44,7 @@ public class ConfigAddon : NativeAddon
             {
                 Service.Config.DisplayEstimatedYield = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
-                Service.UIController.UpdateRotations();
+                Service.UIController.Update();
             }
         });
 
