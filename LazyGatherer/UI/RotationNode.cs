@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.System;
 using LazyGatherer.Solver.Actions;
 using LazyGatherer.Solver.Models;
 
 namespace LazyGatherer.UI;
 
-public sealed class RotationNode : SimpleComponentNode
+public sealed class RotationNode : CustomNode
 {
     private readonly TextNode? expectedYieldNode;
 
@@ -57,11 +55,6 @@ public sealed class RotationNode : SimpleComponentNode
         }
 
         return dictionary;
-    }
-
-    private void AttachNode(NodeBase node)
-    {
-        Service.NativeController.AttachNode(node, this, NodePosition.AsLastChild);
     }
 
     public void Update()

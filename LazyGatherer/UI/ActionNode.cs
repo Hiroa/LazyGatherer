@@ -1,15 +1,13 @@
 ﻿using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.System;
 using LazyGatherer.Models;
 using LazyGatherer.Solver.Actions;
 using LazyGatherer.Solver.Models;
 
 namespace LazyGatherer.UI;
 
-public sealed class ActionNode : SimpleComponentNode
+public sealed class ActionNode : CustomNode
 {
     private readonly IconImageNode iconNode;
     private readonly SimpleImageNode backgroundNode;
@@ -50,11 +48,6 @@ public sealed class ActionNode : SimpleComponentNode
             FontSize = 14,
             IsVisible = count > 1
         });
-    }
-
-    private void AttachNode(NodeBase node)
-    {
-        Service.NativeController.AttachNode(node, this, NodePosition.AsLastChild);
     }
 
     private static uint GetGathererIconId(BaseAction action, GatheringContext context) => context.Job switch
