@@ -18,6 +18,7 @@ public class UIController : IDisposable
     private readonly List<RotationNode> rotationNodes = [];
     private CircleButtonNode? configButtonNode;
     private CircleButtonNode? displayButtonNode;
+    private GpSliderNode? sliderNode;
 
     public UIController()
     {
@@ -127,6 +128,13 @@ public class UIController : IDisposable
                 Service.UIController.UpdateRotations();
             }
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
+
+        Service.NativeController.AttachNode(sliderNode = new GpSliderNode(1000)
+        {
+            Position = new Vector2(320, 460),
+            Size = new Vector2(200, 28),
+            IsVisible = true,
+        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
     }
 
     private void ClearUI()
@@ -143,6 +151,13 @@ public class UIController : IDisposable
             Service.NativeController.DetachNode(displayButtonNode);
             displayButtonNode.Dispose();
             displayButtonNode = null;
+        }
+
+        if (sliderNode != null)
+        {
+            Service.NativeController.DetachNode(sliderNode);
+            sliderNode.Dispose();
+            sliderNode = null;
         }
 
         ClearRotations();
