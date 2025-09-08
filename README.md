@@ -7,7 +7,8 @@ Plugin for Dalamud, LazyGatherer allow you to determine a maximized yield rotati
 ### Roadmap
 
 - [ ] Add option to display min/max yield instead of expected yield
-- [ ] Add option to set max GP to use
+- [x] Add option to set max GP to use
+- [ ] Do something for the collectables
 
 Feel free to ask feature or report bug in the issue section.
 
