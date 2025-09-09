@@ -129,7 +129,9 @@ public class GatheringController : IDisposable
                 BountifulBonus = bountifulBonus,
                 CharacterLevel = player.Level,
                 Job = job,
-                OneTurnRotation = Service.Config.OneTurnRotation
+                OneTurnRotation = Service.Config.OneTurnRotation,
+                TidingsUsed = player.StatusList.Any(status => status.StatusId == 2667), // Tidings
+                YieldUsed = player.StatusList.Any(status => status.StatusId == 219)     // Yield1/2
             };
             Service.Log.Verbose($"{gatheringContext}");
             contexts.Add(gatheringContext);

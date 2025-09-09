@@ -51,6 +51,9 @@ public class GatheringContext
     // Tells if yield1/2 has been used
     public bool YieldUsed { get; set; }
 
+    // Tells if Tidings has been used
+    public bool TidingsUsed { get; set; }
+
     public override string ToString()
     {
         var sb = new StringBuilder();
