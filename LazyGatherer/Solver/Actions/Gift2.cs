@@ -21,12 +21,13 @@ namespace LazyGatherer.Solver.Actions
         public override bool CanExecute(Rotation rotation)
         {
             var context = rotation.Context;
-            return base.CanExecute(rotation) && context.HasBoon;
+            return base.CanExecute(rotation) && context is { HasBoon: true, Gift2Used: false };
         }
 
         public override void Execute(GatheringContext context)
         {
             context.Boon = Math.Min(context.Boon + 0.3, 1);
+            context.Gift2Used = true;
 
             base.Execute(context);
         }

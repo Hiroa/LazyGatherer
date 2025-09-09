@@ -81,7 +81,13 @@ public class GatheringController : IDisposable
         var playerGathering = uiState->PlayerState.Attributes[72];
         var player = Service.ClientState.LocalPlayer;
         var gpToUse = Math.Min((int)player!.CurrentGp, maxGpToUse);
-        var job = (Job)player!.ClassJob.Value.RowId;
+        var job = (Job)player.ClassJob.Value.RowId;
+
+        // Check player status
+        var tidingsUsed = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Tidings);
+        var yieldUsed = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Yield);
+        var gift1Used = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Gift1);
+        var gift2Used = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Gift2);
 
         for (var i = 0; i < 8; i++) // 8 items max by Gathering point
         {
@@ -126,12 +132,15 @@ public class GatheringController : IDisposable
                 Attempts = addon->IntegrityLeftover->NodeText.ToInteger(),
                 HasBoon = itemComponent.HasBoon,
                 Boon = itemComponent.BoonChance / 100.0,
+                BoonBonus = tidingsUsed ? 2 : 1, // +1 if tidings already used
                 BountifulBonus = bountifulBonus,
                 CharacterLevel = player.Level,
                 Job = job,
                 OneTurnRotation = Service.Config.OneTurnRotation,
-                TidingsUsed = player.StatusList.Any(status => status.StatusId == 2667), // Tidings
-                YieldUsed = player.StatusList.Any(status => status.StatusId == 219)     // Yield1/2
+                TidingsUsed = tidingsUsed,
+                YieldUsed = yieldUsed,
+                Gift1Used = gift1Used,
+                Gift2Used = gift2Used
             };
             Service.Log.Verbose($"{gatheringContext}");
             contexts.Add(gatheringContext);

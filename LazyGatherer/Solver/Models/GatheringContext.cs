@@ -54,6 +54,12 @@ public class GatheringContext
     // Tells if Tidings has been used
     public bool TidingsUsed { get; set; }
 
+    // Tells if Gift1 has been used
+    public bool Gift1Used { get; set; }
+
+    // Tells if Gift2 has been used
+    public bool Gift2Used { get; set; }
+
     public override string ToString()
     {
         var sb = new StringBuilder();
