@@ -88,6 +88,7 @@ public class GatheringController : IDisposable
         var yieldUsed = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Yield);
         var gift1Used = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Gift1);
         var gift2Used = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Gift2);
+        var bountifulUsed = player.StatusList.Any(s => s.StatusId == (uint)GathererStatus.Bountiful);
 
         for (var i = 0; i < 8; i++) // 8 items max by Gathering point
         {
@@ -127,13 +128,14 @@ public class GatheringController : IDisposable
                 RowId = (uint)i,
                 Item = item,
                 AvailableGp = gpToUse,
-                BaseAmount = itemComponent.BaseAmount,
+                BaseAmount = bountifulUsed ? itemComponent.BaseAmount - bountifulBonus : itemComponent.BaseAmount,
                 Chance = itemComponent.GatheringChance / 100.0,
                 Attempts = addon->IntegrityLeftover->NodeText.ToInteger(),
                 HasBoon = itemComponent.HasBoon,
                 Boon = itemComponent.BoonChance / 100.0,
                 BoonBonus = tidingsUsed ? 2 : 1, // +1 if tidings already used
                 BountifulBonus = bountifulBonus,
+                BountifulAttempts = bountifulUsed ? 1 : 0,
                 CharacterLevel = player.Level,
                 Job = job,
                 OneTurnRotation = Service.Config.OneTurnRotation,

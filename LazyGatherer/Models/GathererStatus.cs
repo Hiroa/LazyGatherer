@@ -6,4 +6,5 @@ public enum GathererStatus : uint
     Yield = 219,
     Gift1 = 2666,
     Gift2 = 759,
+    Bountiful = 1286,
 }
