@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -25,16 +26,18 @@ public class GpSliderNode : CustomNode
         // Slider node for GP
         AttachNode(sliderNode = new SliderNode()
         {
-            Position = new Vector2(0, 8),
-            Size = new Vector2(150, 28),
+            Position = new Vector2(0, 14),
+            Size = new Vector2(150, 20),
             IsVisible = true,
             Step = 50,
-            Max = maxGp,
-            Min = 0,
+            Range = new Range(0, maxGp),
             Value = maxGp,
             OnValueChanged = value => { Service.GatheringController.ComputeRotations(value); }
         });
-        // Add a bit of spacing - personal preference
-        sliderNode.ValueNode.Position = new Vector2(sliderNode.Width - 22.0f, sliderNode.Height / 4.0f);
+        // Reshape slider for aesthetics
+        sliderNode.SliderBackgroundButtonNode.Height = 18;
+        sliderNode.SliderBackgroundButtonNode.Width = 150 - 22;
+        sliderNode.SliderBackgroundButtonNode.Y = 0;
+        sliderNode.SliderForegroundButtonNode.Y = 1.5f;
     }
 }
