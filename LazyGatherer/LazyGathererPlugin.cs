@@ -17,7 +17,7 @@ namespace LazyGatherer
             Service.Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
             Service.ConfigAddon = new ConfigAddon
             {
-                Size = new Vector2(270.0f, 210.0f),
+                Size = new Vector2(270.0f, 170.0f),
                 Position = new Vector2(300.0f, 300.0f),
                 InternalName = "LazyGathererConfig",
                 NativeController = Service.NativeController,
