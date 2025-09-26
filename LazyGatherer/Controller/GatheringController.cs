@@ -39,10 +39,8 @@ public class GatheringController : IDisposable
         }
     }
 
-    private unsafe void OnGatheringAddonClose(AtkUnitBase* _)
-    {
-        rotationAlreadyComputed = false;
-    }
+    private unsafe void OnGatheringAddonClose(AtkUnitBase* _) => rotationAlreadyComputed = false;
+
 
     public unsafe void ComputeRotations(int maxGpToUse = int.MaxValue)
     {

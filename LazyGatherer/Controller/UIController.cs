@@ -20,8 +20,6 @@ public class UIController : IDisposable
     private CircleButtonNode? displayButtonNode;
     private GpSliderNode? sliderNode;
 
-    private bool uiInitialized;
-
     public unsafe UIController()
     {
         addonController.OnAttach += OnGatheringPostSetup;
@@ -37,7 +35,7 @@ public class UIController : IDisposable
 
     private unsafe void OnGatheringPostSetup(AtkUnitBase* addon) => InitUI(addon);
 
-    private unsafe void OnGatheringPreFinalize(AtkUnitBase* addon) => ClearUI();
+    private unsafe void OnGatheringPreFinalize(AtkUnitBase* addon) => ClearUI(addon);
 
     public unsafe void OnGatheringPostUpdate(AtkUnitBase* addon)
     {
@@ -45,12 +43,6 @@ public class UIController : IDisposable
         if (addonGathering == null)
         {
             return;
-        }
-
-        // If plugin is load during gathering
-        if (!uiInitialized)
-        {
-            InitUI(addon);
         }
 
         // Hide while quick gathering
@@ -75,7 +67,7 @@ public class UIController : IDisposable
 
     public unsafe void DrawRotations(List<KeyValuePair<Rotation, GatheringOutcome>> gatheringOutcomes)
     {
-        AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
+        var gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
         if (gatheringAddon == null)
         {
             return;
@@ -141,11 +133,10 @@ public class UIController : IDisposable
             Size = new Vector2(200, 28),
             IsVisible = Service.Config.Display,
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
-        uiInitialized = true;
     }
 
 
-    private void ClearUI()
+    private unsafe void ClearUI(AtkUnitBase* addon)
     {
         if (configButtonNode != null)
         {
@@ -168,6 +159,6 @@ public class UIController : IDisposable
             sliderNode = null;
         }
 
-        uiInitialized = false;
+        ClearRotations(addon);
     }
 }
