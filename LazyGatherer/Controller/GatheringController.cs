@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Game.Addon.Lifecycle;
-using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit;
 using LazyGatherer.Components;
 using LazyGatherer.Models;
 using LazyGatherer.Solver;
@@ -17,29 +17,31 @@ namespace LazyGatherer.Controller;
 
 public class GatheringController : IDisposable
 {
+    private readonly AddonController addonController = new("Gathering");
     private readonly RotationGenerator rotationGenerator = new();
     private bool rotationAlreadyComputed;
 
     private readonly List<RotationComparer> rotationComparers =
         [new GatheringMaxYieldComparer(), new GatheringEfficiencyComparer()];
 
-    public GatheringController()
+    public unsafe GatheringController()
     {
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostDraw, "Gathering", OnGatheringNodeEvent);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringNodeEvent);
+        addonController.OnDetach += OnGatheringAddonClose;
+        addonController.OnUpdate += OnGatheringAddonUpdate;
+        addonController.Enable();
     }
 
-    public void OnGatheringNodeEvent(AddonEvent ev, AddonArgs args)
+    public unsafe void OnGatheringAddonUpdate(AtkUnitBase* addon)
     {
-        switch (ev)
+        if (!rotationAlreadyComputed)
         {
-            case AddonEvent.PostDraw when !rotationAlreadyComputed:
-                ComputeRotations();
-                break;
-            case AddonEvent.PreFinalize:
-                rotationAlreadyComputed = false;
-                break;
+            ComputeRotations();
         }
+    }
+
+    private unsafe void OnGatheringAddonClose(AtkUnitBase* _)
+    {
+        rotationAlreadyComputed = false;
     }
 
     public unsafe void ComputeRotations(int maxGpToUse = int.MaxValue)
@@ -68,7 +70,7 @@ public class GatheringController : IDisposable
 
     public void Dispose()
     {
-        Service.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringNodeEvent);
+        addonController.Dispose();
     }
 
     private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon, int maxGpToUse)

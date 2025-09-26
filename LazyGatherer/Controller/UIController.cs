@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Game.Addon.Lifecycle;
-using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using LazyGatherer.Solver.Models;
@@ -15,6 +14,7 @@ namespace LazyGatherer.Controller;
 
 public class UIController : IDisposable
 {
+    private readonly AddonController addonController = new("Gathering");
     private readonly List<RotationNode> rotationNodes = [];
     private CircleButtonNode? configButtonNode;
     private CircleButtonNode? displayButtonNode;
@@ -22,27 +22,26 @@ public class UIController : IDisposable
 
     private bool uiInitialized;
 
-    public UIController()
+    public unsafe UIController()
     {
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringPostSetup);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringPreFinalize);
-        Service.AddonLifecycle.RegisterListener(AddonEvent.PostUpdate, "Gathering", OnGatheringPostUpdate);
+        addonController.OnAttach += OnGatheringPostSetup;
+        addonController.OnDetach += OnGatheringPreFinalize;
+        addonController.OnUpdate += OnGatheringPostUpdate;
+        addonController.Enable();
     }
 
     public void Dispose()
     {
-        Service.AddonLifecycle.UnregisterListener(AddonEvent.PostSetup, "Gathering", OnGatheringPostSetup);
-        Service.AddonLifecycle.UnregisterListener(AddonEvent.PreFinalize, "Gathering", OnGatheringPreFinalize);
-        Service.AddonLifecycle.UnregisterListener(AddonEvent.PostUpdate, "Gathering", OnGatheringPostUpdate);
-        ClearUI();
+        addonController.Dispose();
     }
 
-    private void OnGatheringPostSetup(AddonEvent ev, AddonArgs args) => InitUI();
-    private void OnGatheringPreFinalize(AddonEvent ev, AddonArgs args) => ClearUI();
+    private unsafe void OnGatheringPostSetup(AtkUnitBase* addon) => InitUI(addon);
 
-    public unsafe void OnGatheringPostUpdate(AddonEvent ev, AddonArgs args)
+    private unsafe void OnGatheringPreFinalize(AtkUnitBase* addon) => ClearUI();
+
+    public unsafe void OnGatheringPostUpdate(AtkUnitBase* addon)
     {
-        var addonGathering = (AddonGathering*)Service.GameGui.GetAddonByName("Gathering").Address;
+        var addonGathering = (AddonGathering*)addon;
         if (addonGathering == null)
         {
             return;
@@ -51,7 +50,7 @@ public class UIController : IDisposable
         // If plugin is load during gathering
         if (!uiInitialized)
         {
-            InitUI();
+            InitUI(addon);
         }
 
         // Hide while quick gathering
@@ -83,7 +82,7 @@ public class UIController : IDisposable
         }
 
         // Clear existing rotations first
-        ClearRotations();
+        ClearRotations(gatheringAddon);
 
         foreach (var go in gatheringOutcomes)
         {
@@ -93,9 +92,8 @@ public class UIController : IDisposable
         }
     }
 
-    private unsafe void ClearRotations()
+    private unsafe void ClearRotations(AtkUnitBase* gatheringAddon)
     {
-        AtkUnitBase* gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
         if (gatheringAddon != null)
         {
             rotationNodes.ForEach(r => Service.NativeController.DetachNode(r));
@@ -105,9 +103,8 @@ public class UIController : IDisposable
         rotationNodes.Clear();
     }
 
-    private unsafe void InitUI()
+    private unsafe void InitUI(AtkUnitBase* gatheringAddon)
     {
-        var gatheringAddon = (AtkUnitBase*)Service.GameGui.GetAddonByName("Gathering").Address;
         if (gatheringAddon == null)
             return;
 
@@ -171,7 +168,6 @@ public class UIController : IDisposable
             sliderNode = null;
         }
 
-        ClearRotations();
         uiInitialized = false;
     }
 }
