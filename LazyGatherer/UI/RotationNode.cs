@@ -35,7 +35,8 @@ public sealed class RotationNode : CustomNode
             Position = new Vector2(4f + (44 * index), 26),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             FontSize = 14,
-            SeString = $"Expected yield: {Math.Round(outcome.Value.Yield, 1)} for {outcome.Value.UsedGp} GP",
+            SeString =
+                $"Expected yield: {Math.Round(outcome.Value.Yield, 1)} ({Math.Round(outcome.Value.MinYield, 1)}/{Math.Round(outcome.Value.MaxYield, 1)}) for {outcome.Value.UsedGp} GP",
             IsVisible = true,
         });
     }

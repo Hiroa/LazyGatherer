@@ -14,6 +14,8 @@ namespace LazyGatherer.Solver
             var outcome = new GatheringOutcome()
             {
                 Yield = CalculateYield(rotation.Context),
+                MaxYield = CalculateYield(rotation.Context, 1),
+                MinYield = CalculateYield(rotation.Context, 0),
                 UsedGp = CalculateGp(rotation.Actions)
             };
 
@@ -31,9 +33,9 @@ namespace LazyGatherer.Solver
         }
 
 
-        private static double CalculateYield(GatheringContext context)
+        private static double CalculateYield(GatheringContext context, double probability = 0.5)
         {
-            var wiseBinom = new Binomial(0.5, context.WiseAttempts);
+            var wiseBinom = new Binomial(probability, context.WiseAttempts);
             var avgYield = 0d;
 
             for (var i = 0; i <= context.WiseAttempts; i++)
