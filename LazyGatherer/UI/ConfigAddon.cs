@@ -35,11 +35,26 @@ public class ConfigAddon : NativeAddon
 
         AttachNode(new CheckboxNode
         {
+            SeString = "Display max GP slider",
+            IsChecked = Service.Config.DisplayGPSlider,
+            IsVisible = true,
+            Size = new Vector2(150, 20),
+            Position = new Vector2(10, 65),
+            OnClick = isChecked =>
+            {
+                Service.Config.DisplayGPSlider = isChecked;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.UIController.Update();
+            }
+        });
+
+        AttachNode(new CheckboxNode
+        {
             SeString = "Display estimated yield",
             IsChecked = Service.Config.DisplayEstimatedYield,
             IsVisible = true,
             Size = new Vector2(150, 20),
-            Position = new Vector2(10, 65),
+            Position = new Vector2(10, 85),
             OnClick = isChecked =>
             {
                 Service.Config.DisplayEstimatedYield = isChecked;
@@ -54,7 +69,7 @@ public class ConfigAddon : NativeAddon
             IsChecked = Service.Config.OneTurnRotation,
             IsVisible = true,
             Size = new Vector2(150, 20),
-            Position = new Vector2(10, 85),
+            Position = new Vector2(10, 105),
             OnClick = isChecked =>
             {
                 Service.Config.OneTurnRotation = isChecked;
@@ -71,14 +86,14 @@ public class ConfigAddon : NativeAddon
             IsVisible = true,
             Size = new Vector2(200, 20),
             FontSize = 14,
-            Position = new Vector2(10, 105),
+            Position = new Vector2(10, 125),
         });
 
         AttachNode(calculatorNode = new TextDropDownNode()
         {
             IsVisible = true,
             Size = new Vector2(250, 24),
-            Position = new Vector2(10, 125),
+            Position = new Vector2(10, 145),
             SelectedOption = Service.Config.RotationCalculator,
             Options = calculatorOptions,
             OnOptionSelected = selectedItem =>
