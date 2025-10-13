@@ -59,7 +59,7 @@ public class UIController : IDisposable
     {
         if (sliderNode != null)
         {
-            sliderNode.IsVisible = Service.Config.Display && Service.Config.DisplayGPSlider;
+            sliderNode.IsVisible = Service.Config.Display && Service.Config.DisplayGpSlider;
         }
 
         rotationNodes.ForEach(r => r.Update());
@@ -131,7 +131,7 @@ public class UIController : IDisposable
         {
             Position = new Vector2(320, 460),
             Size = new Vector2(200, 28),
-            IsVisible = Service.Config.Display && Service.Config.DisplayGPSlider,
+            IsVisible = Service.Config.Display && Service.Config.DisplayGpSlider,
         }, gatheringAddon->RootNode, NodePosition.AsLastChild);
     }
 

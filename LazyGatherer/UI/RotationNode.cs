@@ -10,7 +10,7 @@ namespace LazyGatherer.UI;
 
 public sealed class RotationNode : CustomNode
 {
-    private readonly TextNode? expectedYieldNode;
+    private readonly TextNode? estimatedYieldNode;
 
     public RotationNode(KeyValuePair<Rotation, GatheringOutcome> outcome)
     {
@@ -30,13 +30,12 @@ public sealed class RotationNode : CustomNode
             index++;
         }
 
-        AttachNode(expectedYieldNode = new TextNode
+        AttachNode(estimatedYieldNode = new TextNode
         {
             Position = new Vector2(4f + (44 * index), 26),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             FontSize = 14,
-            SeString =
-                $"Expected yield: {Math.Round(outcome.Value.Yield, 1)} ({Math.Round(outcome.Value.MinYield, 1)}/{Math.Round(outcome.Value.MaxYield, 1)}) for {outcome.Value.UsedGp} GP",
+            SeString = FormatEstimatedYield(outcome.Value),
             IsVisible = true,
         });
     }
@@ -62,7 +61,26 @@ public sealed class RotationNode : CustomNode
     {
         var config = Service.Config;
         IsVisible = config.Display;
-        if (expectedYieldNode != null)
-            expectedYieldNode.IsVisible = config.DisplayEstimatedYield;
+        if (estimatedYieldNode != null)
+            estimatedYieldNode.IsVisible = config.DisplayEstimatedYield;
+    }
+
+    private static String FormatEstimatedYield(GatheringOutcome outcome)
+    {
+        var roundedYield = Math.Round(outcome.Yield, 1);
+        var roundedMinYield = Math.Round(outcome.MinYield, 1);
+        var roundedMaxYield = Math.Round(outcome.MaxYield, 1);
+        return Service.Config.EstimatedYieldStyle switch
+        {
+            EstimatedYieldStyle.Short => $"{roundedYield}",
+            EstimatedYieldStyle.ShortWithMinMax => $"{roundedYield} ({roundedMinYield}/{roundedMaxYield})",
+            EstimatedYieldStyle.Basic => $"Estimated yield: {roundedYield}",
+            EstimatedYieldStyle.BasicWithMinMax =>
+                $"Estimated yield: {roundedYield} ({roundedMinYield}/{roundedMaxYield})",
+            EstimatedYieldStyle.Detailed => $"Estimated yield: {roundedYield} for {outcome.UsedGp} GP",
+            EstimatedYieldStyle.DetailedWithMinMax =>
+                $"Estimated yield: {roundedYield} ({roundedMinYield}/{roundedMaxYield}) for {outcome.UsedGp} GP",
+            _ => $"Estimated yield: {roundedYield}"
+        };
     }
 }
