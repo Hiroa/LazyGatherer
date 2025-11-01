@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace LazyGatherer.Solver.Comparator
+namespace LazyGatherer.Solver.Gathering.Comparator
 {
     internal class DoubleEpsilonComparer : IComparer<double>
     {

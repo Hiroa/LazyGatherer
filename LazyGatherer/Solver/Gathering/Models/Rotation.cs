@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using LazyGatherer.Models;
-using LazyGatherer.Solver.Actions;
+using LazyGatherer.Solver.Gathering.Actions;
 
-namespace LazyGatherer.Solver.Models
+namespace LazyGatherer.Solver.Gathering.Models
 {
     public class Rotation(GatheringContext context)
     {

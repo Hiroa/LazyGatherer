@@ -1,8 +1,8 @@
 ﻿using System;
-using LazyGatherer.Solver.Models;
+using LazyGatherer.Solver.Gathering.Models;
 using Action = Lumina.Excel.Sheets.Action;
 
-namespace LazyGatherer.Solver.Actions
+namespace LazyGatherer.Solver.Gathering.Actions
 {
     // Sols fertiles II
     public class Gift2 : BaseAction

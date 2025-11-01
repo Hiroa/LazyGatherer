@@ -2,7 +2,7 @@
 using System.Text;
 using LazyGatherer.Models;
 
-namespace LazyGatherer.Solver.Models;
+namespace LazyGatherer.Solver.Gathering.Models;
 
 public class GatheringContext
 {

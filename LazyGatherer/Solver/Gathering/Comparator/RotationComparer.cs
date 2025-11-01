@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using LazyGatherer.Models;
-using LazyGatherer.Solver.Models;
+using LazyGatherer.Solver.Gathering.Models;
 
-namespace LazyGatherer.Solver.Comparator;
+namespace LazyGatherer.Solver.Gathering.Comparator;
 
 public abstract class RotationComparer(ComparerEnum name) : IComparer<GatheringOutcome>
 {

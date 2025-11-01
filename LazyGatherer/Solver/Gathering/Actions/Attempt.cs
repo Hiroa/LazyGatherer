@@ -1,12 +1,12 @@
-﻿using LazyGatherer.Solver.Models;
+﻿using LazyGatherer.Solver.Gathering.Models;
 using Lumina.Excel.Sheets;
 
-namespace LazyGatherer.Solver.Actions
+namespace LazyGatherer.Solver.Gathering.Actions
 {
-    // Sagesse du fermier améliorer
-    public class AttemptEnhanced : BaseAction
+    // Sagesse du fermier
+    public class Attempt : BaseAction
     {
-        protected override int Level => 90;
+        protected override int Level => 25;
 
         public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(215);
         public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(232);
@@ -17,13 +17,12 @@ namespace LazyGatherer.Solver.Actions
         public override bool CanExecute(Rotation rotation)
         {
             var context = rotation.Context;
-            return !context.OneTurnRotation && base.CanExecute(rotation);
+            return !context.OneTurnRotation && base.CanExecute(rotation) && context.CharacterLevel < 90;
         }
 
         public override void Execute(GatheringContext context)
         {
             context.Attempts++;
-            context.WiseAttempts++;
 
             base.Execute(context);
         }

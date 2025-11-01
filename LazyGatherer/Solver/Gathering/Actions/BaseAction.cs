@@ -1,9 +1,9 @@
 ﻿using Dalamud.Utility;
 using LazyGatherer.Models;
-using LazyGatherer.Solver.Models;
+using LazyGatherer.Solver.Gathering.Models;
 using Action = Lumina.Excel.Sheets.Action;
 
-namespace LazyGatherer.Solver.Actions
+namespace LazyGatherer.Solver.Gathering.Actions
 {
     public abstract class BaseAction
     {

@@ -8,9 +8,9 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using LazyGatherer.Components;
 using LazyGatherer.Models;
-using LazyGatherer.Solver;
-using LazyGatherer.Solver.Comparator;
-using LazyGatherer.Solver.Models;
+using LazyGatherer.Solver.Gathering;
+using LazyGatherer.Solver.Gathering.Comparator;
+using LazyGatherer.Solver.Gathering.Models;
 using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Controller;

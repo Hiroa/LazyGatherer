@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LazyGatherer.Solver.Actions;
-using LazyGatherer.Solver.Models;
+using LazyGatherer.Solver.Gathering.Actions;
+using LazyGatherer.Solver.Gathering.Models;
 using MathNet.Numerics.Distributions;
 
-namespace LazyGatherer.Solver
+namespace LazyGatherer.Solver.Gathering
 {
     public static class GatheringCalculator
     {

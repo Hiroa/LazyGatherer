@@ -1,9 +1,8 @@
-﻿using LazyGatherer.Models;
-using LazyGatherer.Solver.Models;
+﻿using LazyGatherer.Solver.Gathering.Models;
 
-namespace LazyGatherer.Solver.Comparator
+namespace LazyGatherer.Solver.Gathering.Comparator
 {
-    public class GatheringMaxYieldComparer() : RotationComparer(ComparerEnum.MaxYield)
+    public class GatheringEfficiencyComparer() : RotationComparer(ComparerEnum.MaxYieldPerGp)
     {
         private readonly DoubleEpsilonComparer doubleComparer = new(1e-6);
 
@@ -22,14 +21,9 @@ namespace LazyGatherer.Solver.Comparator
                 return 1;
             }
 
-            var result = doubleComparer.Compare(x.Yield, y.Yield);
+            var result = doubleComparer.Compare(x.AddYieldPerGp, y.AddYieldPerGp);
 
-            if (result == 0)
-            {
-                return -x.UsedGp.CompareTo(y.UsedGp);
-            }
-
-            return result;
+            return result == 0 ? doubleComparer.Compare(x.Yield, y.Yield) : result;
         }
     }
 }

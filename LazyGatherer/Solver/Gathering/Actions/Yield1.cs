@@ -1,7 +1,7 @@
-﻿using LazyGatherer.Solver.Models;
+﻿using LazyGatherer.Solver.Gathering.Models;
 using Lumina.Excel.Sheets;
 
-namespace LazyGatherer.Solver.Actions
+namespace LazyGatherer.Solver.Gathering.Actions
 {
     // Récolte bénie
     public class Yield1 : BaseAction
