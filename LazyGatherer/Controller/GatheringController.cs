@@ -5,19 +5,19 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
+using KamiToolKit.Classes.Controllers;
 using LazyGatherer.Components;
+using LazyGatherer.Gathering;
+using LazyGatherer.Gathering.Comparator;
+using LazyGatherer.Gathering.Models;
 using LazyGatherer.Models;
-using LazyGatherer.Solver;
-using LazyGatherer.Solver.Comparator;
-using LazyGatherer.Solver.Models;
 using Lumina.Excel.Sheets;
 
 namespace LazyGatherer.Controller;
 
 public class GatheringController : IDisposable
 {
-    private readonly AddonController addonController = new("Gathering");
+    private readonly AddonController? addonController;
     private readonly RotationGenerator rotationGenerator = new();
     private bool rotationAlreadyComputed;
 
@@ -26,6 +26,7 @@ public class GatheringController : IDisposable
 
     public unsafe GatheringController()
     {
+        addonController = new AddonController("Gathering");
         addonController.OnDetach += OnGatheringAddonClose;
         addonController.OnUpdate += OnGatheringAddonUpdate;
         addonController.Enable();
@@ -68,7 +69,7 @@ public class GatheringController : IDisposable
 
     public void Dispose()
     {
-        addonController.Dispose();
+        addonController?.Dispose();
     }
 
     private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon, int maxGpToUse)
@@ -79,7 +80,7 @@ public class GatheringController : IDisposable
         // Player info
         var uiState = UIState.Instance();
         var playerGathering = uiState->PlayerState.Attributes[72];
-        var player = Service.ClientState.LocalPlayer;
+        var player = Service.ObjectTable.LocalPlayer;
         var gpToUse = Math.Min((int)player!.CurrentGp, maxGpToUse);
         var job = (Job)player.ClassJob.Value.RowId;
 
