@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using LazyGatherer.Models;
 using LazyGatherer.Solver.Actions;
 using LazyGatherer.Solver.Models;
 

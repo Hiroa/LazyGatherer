@@ -1,4 +1,4 @@
-﻿namespace LazyGatherer.Solver.Models;
+﻿namespace LazyGatherer.Models;
 
 public enum EstimatedYieldStyle
 {

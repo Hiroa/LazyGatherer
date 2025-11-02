@@ -1,8 +1,9 @@
-﻿using LazyGatherer.Solver.Models;
+﻿using LazyGatherer.Models;
+using LazyGatherer.Solver.Models;
 
 namespace LazyGatherer.Solver.Comparator
 {
-    public class GatheringEfficiencyComparer() : RotationComparer("Max yield per GP")
+    public class GatheringEfficiencyComparer() : RotationComparer(ComparerEnum.MaxYieldPerGp)
     {
         private readonly DoubleEpsilonComparer doubleComparer = new(1e-6);
 

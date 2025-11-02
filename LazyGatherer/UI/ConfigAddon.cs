@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using LazyGatherer.Solver.Models;
+using LazyGatherer.Models;
 
 namespace LazyGatherer.UI;
 
@@ -13,12 +13,21 @@ public class ConfigAddon : NativeAddon
 {
     private CheckboxNode? displayNode;
 
-    private TextDropDownNode? calculatorNode;
-    private TextDropDownNode? EstimatedYieldStyleNode;
+    private readonly Dictionary<ComparerEnum, string> calculatorOptions = new()
+    {
+        { ComparerEnum.MaxYield, "Max Yield" },
+        { ComparerEnum.MaxYieldPerGp, "Max Yield per GP" }
+    };
 
-    // TODO improve this
-    private readonly List<string> calculatorOptions = ["Max yield", "Max yield per GP"];
-    private readonly List<string> estimatedYieldStyleOptions = [..Enum.GetNames<EstimatedYieldStyle>()];
+    private readonly Dictionary<EstimatedYieldStyle, string> estimatedYieldStyleOptions = new()
+    {
+        { EstimatedYieldStyle.Short, "Short" },
+        { EstimatedYieldStyle.ShortWithMinMax, "Short with min/max" },
+        { EstimatedYieldStyle.Basic, "Basic" },
+        { EstimatedYieldStyle.BasicWithMinMax, "Basic with min/max" },
+        { EstimatedYieldStyle.Detailed, "Detailed" },
+        { EstimatedYieldStyle.DetailedWithMinMax, "Detailed with min/max" }
+    };
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
@@ -89,16 +98,18 @@ public class ConfigAddon : NativeAddon
             Position = new Vector2(48, 125),
         });
 
-        AttachNode(EstimatedYieldStyleNode = new TextDropDownNode()
+        AttachNode(new TextDropDownNode()
         {
             IsVisible = true,
-            Size = new Vector2(200, 24),
+            Size = new Vector2(220, 24),
             Position = new Vector2(48, 145),
-            Options = estimatedYieldStyleOptions,
-            SelectedOption = Service.Config.EstimatedYieldStyle.ToString(),
+            Options = estimatedYieldStyleOptions.Values.ToList(),
+            SelectedOption = estimatedYieldStyleOptions[Service.Config.EstimatedYieldStyle],
             OnOptionSelected = selectedItem =>
             {
-                Service.Config.EstimatedYieldStyle = Enum.Parse<EstimatedYieldStyle>(selectedItem);
+                Service.Config.EstimatedYieldStyle = estimatedYieldStyleOptions
+                                                     .First(kvp => kvp.Value == selectedItem).Key;
+                ;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
@@ -143,21 +154,21 @@ public class ConfigAddon : NativeAddon
             Position = new Vector2(28, 219),
         });
 
-        AttachNode(calculatorNode = new TextDropDownNode()
+        AttachNode(new TextDropDownNode()
         {
             IsVisible = true,
-            Size = new Vector2(220, 24),
+            Size = new Vector2(240, 24),
             Position = new Vector2(28, 239),
-            Options = calculatorOptions,
-            SelectedOption = Service.Config.RotationCalculator,
+            Options = calculatorOptions.Values.ToList(),
+            SelectedOption = calculatorOptions[Service.Config.RotationCalculator],
             OnOptionSelected = selectedItem =>
             {
-                Service.Config.RotationCalculator = selectedItem;
+                Service.Config.RotationCalculator =
+                    calculatorOptions.First(kvp => kvp.Value == selectedItem).Key;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
         });
-        calculatorNode.OptionListNode.ScrollBarNode.IsVisible = false;
     }
 
     protected override unsafe void OnUpdate(AtkUnitBase* addon)
