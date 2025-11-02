@@ -1,17 +1,8 @@
-﻿using Lumina.Excel.Sheets;
-
-namespace LazyGatherer.Solver.Collectable.Model.Actions
+﻿namespace LazyGatherer.Solver.Collectable.Model.Actions
 {
     // Sagesse du fermier
-    public class Attempt : BaseAction
+    internal class Attempt() : BaseAction(232, 215)
     {
-        protected override int Level => 25;
-
-        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(215);
-        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(232);
-        public override int Gp => 300;
-        public override bool IsEndingTurn => false;
-
         public override bool CanExecute(Rotation rotation)
         {
             return rotation.Context.Attempts < rotation.Context.MaxAttempts && base.CanExecute(rotation);
