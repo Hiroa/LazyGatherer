@@ -1,7 +1,12 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using Dalamud.Utility;
 using LazyGatherer.Solver.Collectable.Model;
 using LazyGatherer.Solver.Collectable.Model.Actions;
-using LazyGatherer.Solver.Collectable.Model.Conditions;
+using LazyGatherer.Solver.Collectable.Model.Presets;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Turn = LazyGatherer.Solver.Collectable.Model.Turn;
 
 namespace LazyGatherer.Solver.Collectable;
 
@@ -11,6 +16,7 @@ public static class RotationManager
 
     public static BaseAction? GetNextAction(Rotation rotation)
     {
+        Service.Log.Info("Determining next action...\n" + rotation.Context);
         // Prioritize wise if not max attempts - no matter the rotation
         if (rotation.Context.Attempts < rotation.Context.MaxAttempts
             && rotation.Context.HasEureka)
@@ -18,8 +24,10 @@ public static class RotationManager
             return Wise;
         }
 
+        var count = 0;
         foreach (var turn in rotation.Turns)
         {
+            Service.Log.Info("Checking turn " + count++);
             if (turn.Conditions.All(c => c.IsSatisfied(rotation.Context)))
             {
                 var action = turn.Actions.FirstOrDefault(a => a.CanExecute(rotation));
@@ -49,26 +57,50 @@ public static class RotationManager
         return true;
     }
 
+    public static Rotation Import(string str, Context ctx)
+    {
+        try
+        {
+            var importStr = Util.DecompressString(Convert.FromBase64String(str));
+            var preset = JsonConvert.DeserializeObject<Preset>(importStr, JsonSettings);
+            if (preset == null)
+            {
+                throw new Exception("Deserialized preset is null");
+            }
+
+            // Service.Log.Info("Imported successfully");
+            return Rotation.FromPreset(preset, ctx);
+        }
+        catch (Exception ex)
+        {
+            Service.Log.Error($"Error importing rotation!\n{ex}");
+            return BasicRotation(ctx);
+        }
+    }
+
     public static Rotation BasicRotation(Context ctx)
     {
-        var r = new Rotation
+        var template = new Preset
         {
-            Context = ctx,
+            Name = "1000 Gp rotation from TC",
+            MinGp = 1000,
+            MinLevel = 50,
             Turns =
             {
                 new Turn // Reach 1000 progression
                 {
                     Actions =
                     {
-                        new Attempt(),
-                        new Collect()
+                        BaseAction.Actions[BaseAction.CollectableAction.Attempt],
+                        BaseAction.Actions[BaseAction.CollectableAction.Collect],
                     },
                     Conditions =
                     {
-                        new ProgressionCondition
+                        new Condition
                         {
-                            RequiredProgression = 1000,
-                            Equality = Equality.HigherOrEqual
+                            ConditionOn = Condition.ConditionEnum.Progression,
+                            Value = 1000,
+                            ComparisonOperator = Condition.ComparisonOperatorEnum.HigherOrEqual
                         }
                     }
                 },
@@ -76,14 +108,15 @@ public static class RotationManager
                 {
                     Actions =
                     {
-                        new Collect()
+                        BaseAction.Actions[BaseAction.CollectableAction.Collect],
                     },
                     Conditions =
                     {
-                        new AttemptsConditions
+                        new Condition
                         {
-                            AttemptsAmount = 1,
-                            Equality = Equality.LowerOrEqual
+                            ConditionOn = Condition.ConditionEnum.Attempt,
+                            Value = 1,
+                            ComparisonOperator = Condition.ComparisonOperatorEnum.LowerOrEqual
                         }
                     }
                 },
@@ -91,19 +124,21 @@ public static class RotationManager
                 {
                     Actions =
                     {
-                        new Scrutiny(),
-                        new Meticulous()
+                        BaseAction.Actions[BaseAction.CollectableAction.Scrutiny],
+                        BaseAction.Actions[BaseAction.CollectableAction.Meticulous],
                     },
                     Conditions =
                     {
-                        new ProgressionCondition
+                        new Condition
                         {
-                            RequiredProgression = 800,
-                            Equality = Equality.Lower
+                            ConditionOn = Condition.ConditionEnum.Progression,
+                            Value = 800,
+                            ComparisonOperator = Condition.ComparisonOperatorEnum.Lower
                         },
-                        new CollectorStandardCondition
+                        new Condition
                         {
-                            ShouldHaveCollectorStandard = false
+                            ConditionOn = Condition.ConditionEnum.CollectorStandard,
+                            Value = false
                         }
                     }
                 },
@@ -111,19 +146,21 @@ public static class RotationManager
                 {
                     Actions =
                     {
-                        new Scrutiny(),
-                        new Brazen()
+                        BaseAction.Actions[BaseAction.CollectableAction.Scrutiny],
+                        BaseAction.Actions[BaseAction.CollectableAction.Brazen],
                     },
                     Conditions =
                     {
-                        new ProgressionCondition
+                        new Condition
                         {
-                            RequiredProgression = 800,
-                            Equality = Equality.Lower
+                            ConditionOn = Condition.ConditionEnum.Progression,
+                            Value = 800,
+                            ComparisonOperator = Condition.ComparisonOperatorEnum.Lower
                         },
-                        new CollectorStandardCondition
+                        new Condition
                         {
-                            ShouldHaveCollectorStandard = true
+                            ConditionOn = Condition.ConditionEnum.CollectorStandard,
+                            Value = true
                         }
                     }
                 },
@@ -131,18 +168,20 @@ public static class RotationManager
                 {
                     Actions =
                     {
-                        new Meticulous()
+                        BaseAction.Actions[BaseAction.CollectableAction.Meticulous],
                     },
                     Conditions =
                     {
-                        new ProgressionCondition
+                        new Condition
                         {
-                            RequiredProgression = 800,
-                            Equality = Equality.HigherOrEqual
+                            ConditionOn = Condition.ConditionEnum.Progression,
+                            Value = 800,
+                            ComparisonOperator = Condition.ComparisonOperatorEnum.HigherOrEqual
                         },
-                        new CollectorStandardCondition
+                        new Condition
                         {
-                            ShouldHaveCollectorStandard = true
+                            ConditionOn = Condition.ConditionEnum.CollectorStandard,
+                            Value = true
                         }
                     }
                 },
@@ -150,14 +189,15 @@ public static class RotationManager
                 {
                     Actions =
                     {
-                        new Meticulous()
+                        BaseAction.Actions[BaseAction.CollectableAction.Meticulous],
                     },
                     Conditions =
                     {
-                        new ProgressionCondition
+                        new Condition
                         {
-                            RequiredProgression = 850,
-                            Equality = Equality.HigherOrEqual
+                            ConditionOn = Condition.ConditionEnum.Progression,
+                            Value = 850,
+                            ComparisonOperator = Condition.ComparisonOperatorEnum.HigherOrEqual
                         }
                     }
                 },
@@ -165,23 +205,37 @@ public static class RotationManager
                 {
                     Actions =
                     {
-                        new Scour()
+                        BaseAction.Actions[BaseAction.CollectableAction.Scour],
                     },
                     Conditions =
                     {
-                        new ProgressionCondition
+                        new Condition
                         {
-                            RequiredProgression = 800,
-                            Equality = Equality.Higher
+                            ConditionOn = Condition.ConditionEnum.Progression,
+                            Value = 800,
+                            ComparisonOperator = Condition.ComparisonOperatorEnum.Lower
                         },
-                        new CollectorStandardCondition
+                        new Condition
                         {
-                            ShouldHaveCollectorStandard = false
+                            ConditionOn = Condition.ConditionEnum.CollectorStandard,
+                            Value = false
                         }
                     }
                 }
             }
         };
-        return r;
+        var serialize = JsonConvert.SerializeObject(template, JsonSettings);
+        var b64 = Convert.ToBase64String(Util.CompressString(serialize));
+        Service.Log.Info("Using basic rotation:\n" + serialize + "\n" + b64);
+        return Rotation.FromPreset(template, ctx);
     }
+
+    internal static readonly JsonSerializerSettings JsonSettings = new()
+    {
+        Converters =
+        {
+            new BaseActionConverter(),
+            new StringEnumConverter()
+        }
+    };
 }

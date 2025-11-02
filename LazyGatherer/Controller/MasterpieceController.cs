@@ -68,7 +68,9 @@ public unsafe class MasterpieceController : IDisposable
         if (!IsAddonReady(masterpieceAddon))
             return;
         var gatheringContexts = GetGatheringContexts(masterpieceAddon, int.MaxValue);
-        var rotation = RotationManager.BasicRotation(gatheringContexts);
+        var import =
+            "H4sIAAAAAAAACtWTQUvEMBCF/0qZcw7xsCC5rYush9UKu3iRHkI7uwbSTJwkii7979JdS6FUKQXBPQ5k3nsf83KEB10jKLiSUmZrnzFFHQ25bM9UZ7sVCLg3boNvaEEt5Glae1DtewG7xC6Aej7Cilxl2sVurL1mE8jlHllHYlBwZw4vyDnfviZtQfQ7uQMFj0wHxhAMORDwpG3Cs01TCFiWnTYsY8Tax9O+tVhGKBoxLcCG3n/273U774HxPLtpnNdSnlVHZMbjfqch3kbtKs1VL7bXNuAg/LbkFI37aO+J0ZTJUgr/HyVy+oXkhvUnuukUMwr41zRzjjEHYzH8RpfUgvFCU2IomqL5AnacfTTEBAAA";
+        var rotation = RotationManager.Import(import, gatheringContexts);
         if (!RotationManager.IsValidRotation(rotation))
         {
             Service.Log.Info("Invalid rotation generated.");
@@ -77,9 +79,9 @@ public unsafe class MasterpieceController : IDisposable
 
         var action = RotationManager.GetNextAction(rotation);
 
-        if (action != null && action.GetJobAction().RowId != CurrActionId)
+        if (action != null && action.GetJobAction() != CurrActionId)
         {
-            CurrActionId = action.GetJobAction().RowId;
+            CurrActionId = action.GetJobAction();
             Service.Log.Info($"Next action: {CurrActionId}");
             foreach (var (key, antsNode) in antsNodes)
             {
@@ -126,7 +128,7 @@ public unsafe class MasterpieceController : IDisposable
         var eureka = player.StatusList.Any(s => s.StatusId == 2765);
 
         // Get addon info
-        var progression = addon->GetTextNodeById(47)->NodeText.ToInteger();
+        var progression = addon->GetTextNodeById(6)->NodeText.ToInteger();
 
         var context = new Context
         {
