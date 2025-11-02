@@ -25,7 +25,9 @@ namespace LazyGatherer
             };
 
             Service.GatheringController = new GatheringController();
+            Service.MasterpieceController = new MasterpieceController();
             Service.UIController = new UIController();
+            Service.Hooks = new Hooks();
 
             Service.Interface.UiBuilder.OpenConfigUi += OpenConfig;
         }
@@ -33,7 +35,9 @@ namespace LazyGatherer
         public void Dispose()
         {
             Service.Interface.UiBuilder.OpenConfigUi -= OpenConfig;
+            Service.Hooks.Dispose();
             Service.UIController.Dispose();
+            Service.MasterpieceController.Dispose();
             Service.GatheringController.Dispose();
             Service.ConfigAddon.Dispose();
             Service.NativeController.Dispose();

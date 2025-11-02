@@ -3,12 +3,12 @@
 namespace LazyGatherer.Solver.Collectable.Model.Actions
 {
     // Sagesse du fermier
-    public class Attempt : BaseAction
+    public class Wise : BaseAction
     {
         protected override int Level => 25;
 
-        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(215);
-        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(232);
+        public override Action BotanistAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(26522);
+        public override Action MinerAction => Service.DataManager.Excel.GetSheet<Action>().GetRow(26521);
         public override int Gp => 300;
         public override bool IsEndingTurn => false;
 

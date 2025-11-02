@@ -5,10 +5,19 @@ using LazyGatherer.Solver.Collectable.Model.Conditions;
 
 namespace LazyGatherer.Solver.Collectable;
 
-public class RotationManager
+public static class RotationManager
 {
+    private static readonly Wise Wise = new();
+
     public static BaseAction? GetNextAction(Rotation rotation)
     {
+        // Prioritize wise if not max attempts - no matter the rotation
+        if (rotation.Context.Attempts < rotation.Context.MaxAttempts
+            && rotation.Context.HasEureka)
+        {
+            return Wise;
+        }
+
         foreach (var turn in rotation.Turns)
         {
             if (turn.Conditions.All(c => c.IsSatisfied(rotation.Context)))
@@ -28,10 +37,11 @@ public class RotationManager
     {
         foreach (var turn in rotation.Turns)
         {
-            var count = turn.Actions.Select(a => a.IsEndingTurn).Count();
-            if (count > 1)
+            var actions = turn.Actions.Where(a => a.IsEndingTurn).ToList();
+            if (actions.Count > 1)
             {
                 Service.Log.Info("Invalid rotation: More than one ending turn action in a single turn.");
+                Service.Log.Info("Turn actions: " + string.Join(", ", actions));
                 return false;
             }
         }

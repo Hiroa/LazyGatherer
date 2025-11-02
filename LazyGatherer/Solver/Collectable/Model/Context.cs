@@ -16,7 +16,7 @@ public class Context
 
     // Gathering info
     // Item to gather
-    public required ItemBase Item { get; init; }
+    public required string ItemName { get; init; }
 
     // Gathering progression on 1000
     public int Progression { get; set; }
@@ -26,6 +26,7 @@ public class Context
 
     // Attempts for this node
     public required int Attempts { get; set; }
+    public required int MaxAttempts { get; set; }
 
     // Gp regenerated per attempt
     public int GpRegenPerAttempt => CharacterLevel < 80 ? 5 : 6;
@@ -33,6 +34,7 @@ public class Context
     // Gathering buff
     public required bool HasCollectorStandard { get; init; }
     public required bool HasScrutiny { get; init; }
+    public required bool HasEureka { get; init; }
 
     public override string ToString()
     {

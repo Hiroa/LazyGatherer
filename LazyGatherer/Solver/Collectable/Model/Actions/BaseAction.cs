@@ -1,4 +1,5 @@
-﻿using Dalamud.Utility;
+﻿using System;
+using Dalamud.Utility;
 using LazyGatherer.Models;
 using Action = Lumina.Excel.Sheets.Action;
 
@@ -23,9 +24,16 @@ namespace LazyGatherer.Solver.Collectable.Model.Actions
             return context.AvailableGp >= Gp;
         }
 
-        public virtual void Execute(Context context)
+        public Action GetJobAction()
         {
-            context.AvailableGp -= Gp;
+            var player = Service.ClientState.LocalPlayer;
+            var job = (Job)player!.ClassJob.RowId;
+            return job switch
+            {
+                Job.Min => MinerAction,
+                Job.Bot => BotanistAction,
+                _ => throw new ArgumentOutOfRangeException(nameof(job), $"Unsupported job: {job}")
+            };
         }
 
         public override string ToString()

@@ -39,6 +39,9 @@ namespace LazyGatherer
         [PluginService]
         internal static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
 
+        [PluginService]
+        public static IGameInteropProvider GameInteropProvider { get; private set; } = null!;
+
         // Plugin service
         internal static NativeController NativeController { get; set; }
         internal static Config Config { get; set; }
@@ -46,5 +49,7 @@ namespace LazyGatherer
         internal static ConfigAddon ConfigAddon { get; set; }
         internal static UIController UIController { get; set; }
         internal static GatheringController GatheringController { get; set; }
+        internal static MasterpieceController MasterpieceController { get; set; }
+        internal static Hooks Hooks { get; set; }
     }
 }
