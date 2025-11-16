@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using LazyGatherer.Models;
 using LazyGatherer.Solver.Gathering.Models;
 
 namespace LazyGatherer.Solver.Gathering.Comparator;
