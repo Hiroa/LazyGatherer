@@ -1,9 +1,8 @@
-﻿using System.Numerics;
-using Dalamud.Plugin;
+﻿using Dalamud.Plugin;
 using KamiToolKit;
 using LazyGatherer.Controller;
 using LazyGatherer.Models;
-using LazyGatherer.UI;
+using LazyGatherer.UI.Addon;
 
 namespace LazyGatherer
 {
@@ -15,14 +14,9 @@ namespace LazyGatherer
             Service.NativeController = new NativeController(pluginInterface);
 
             Service.Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
-            Service.ConfigAddon = new ConfigAddon
-            {
-                Size = new Vector2(290.0f, 284.0f),
-                Position = new Vector2(300.0f, 300.0f),
-                InternalName = "LazyGathererConfig",
-                NativeController = Service.NativeController,
-                Title = "LazyGatherer configuration",
-            };
+            Service.ConfigAddon = GetConfigAddon();
+            Service.CollectableAddon = GetCollectableAddon();
+            Service.CollectableAddon.DebugOpen();
 
             Service.GatheringController = new GatheringController();
             Service.MasterpieceController = new MasterpieceController();
@@ -39,11 +33,26 @@ namespace LazyGatherer
             Service.UIController.Dispose();
             Service.MasterpieceController.Dispose();
             Service.GatheringController.Dispose();
+            Service.CollectableAddon.Dispose();
             Service.ConfigAddon.Dispose();
             Service.NativeController.Dispose();
         }
 
         private static void OpenConfig()
             => Service.ConfigAddon.Toggle();
+
+        private static ConfigAddon GetConfigAddon() => new ConfigAddon
+        {
+            NativeController = Service.NativeController,
+            InternalName = "LazyGathererConfig",
+            Title = "LazyGatherer configuration",
+        };
+
+        private static CollectableAddon GetCollectableAddon() => new CollectableAddon
+        {
+            NativeController = Service.NativeController,
+            InternalName = "LazyGathererCollectable",
+            Title = "LazyGatherer collectable configuration",
+        };
     }
 }

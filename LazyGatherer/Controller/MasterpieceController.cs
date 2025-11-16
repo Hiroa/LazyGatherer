@@ -10,6 +10,7 @@ using KamiToolKit.Nodes;
 using LazyGatherer.Models;
 using LazyGatherer.Solver.Collectable;
 using LazyGatherer.Solver.Collectable.Model;
+using LazyGatherer.Solver.Collectable.Model.Presets;
 
 namespace LazyGatherer.Controller;
 
@@ -68,9 +69,8 @@ public unsafe class MasterpieceController : IDisposable
         if (!IsAddonReady(masterpieceAddon))
             return;
         var gatheringContexts = GetGatheringContexts(masterpieceAddon, int.MaxValue);
-        var import =
-            "H4sIAAAAAAAACtWTQUvEMBCF/0qZcw7xsCC5rYush9UKu3iRHkI7uwbSTJwkii7979JdS6FUKQXBPQ5k3nsf83KEB10jKLiSUmZrnzFFHQ25bM9UZ7sVCLg3boNvaEEt5Glae1DtewG7xC6Aej7Cilxl2sVurL1mE8jlHllHYlBwZw4vyDnfviZtQfQ7uQMFj0wHxhAMORDwpG3Cs01TCFiWnTYsY8Tax9O+tVhGKBoxLcCG3n/273U774HxPLtpnNdSnlVHZMbjfqch3kbtKs1VL7bXNuAg/LbkFI37aO+J0ZTJUgr/HyVy+oXkhvUnuukUMwr41zRzjjEHYzH8RpfUgvFCU2IomqL5AnacfTTEBAAA";
-        var rotation = RotationManager.Import(import, gatheringContexts);
+        var preset = Preset.Import(BuiltIn.ThousandGpTcRotation);
+        var rotation = Rotation.FromPreset(preset, gatheringContexts);
         if (!RotationManager.IsValidRotation(rotation))
         {
             Service.Log.Info("Invalid rotation generated.");

@@ -1,6 +1,6 @@
 ﻿namespace LazyGatherer.Solver.Collectable.Model.Actions;
 
-// Selection
+// Inspection rigoureuse
 internal class Scrutiny() : BaseAction(22185, 22189)
 {
     public override bool CanExecute(Rotation rotation)

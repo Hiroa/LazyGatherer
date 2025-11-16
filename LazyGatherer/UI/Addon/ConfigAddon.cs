@@ -7,7 +7,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using LazyGatherer.Models;
 
-namespace LazyGatherer.UI;
+namespace LazyGatherer.UI.Addon;
 
 public class ConfigAddon : NativeAddon
 {
@@ -31,6 +31,7 @@ public class ConfigAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
+        SetWindowSize(new Vector2(270.0f, 284.0f));
         AttachNode(new TextNode
         {
             SeString = "Display options",

@@ -4,7 +4,7 @@ using Dalamud.Plugin.Services;
 using KamiToolKit;
 using LazyGatherer.Controller;
 using LazyGatherer.Models;
-using LazyGatherer.UI;
+using LazyGatherer.UI.Addon;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace LazyGatherer
@@ -45,11 +45,13 @@ namespace LazyGatherer
         // Plugin service
         internal static NativeController NativeController { get; set; }
         internal static Config Config { get; set; }
-
-        internal static ConfigAddon ConfigAddon { get; set; }
         internal static UIController UIController { get; set; }
         internal static GatheringController GatheringController { get; set; }
         internal static MasterpieceController MasterpieceController { get; set; }
         internal static Hooks Hooks { get; set; }
+
+        // Addons
+        internal static ConfigAddon ConfigAddon { get; set; }
+        internal static CollectableAddon CollectableAddon { get; set; }
     }
 }

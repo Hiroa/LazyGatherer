@@ -9,6 +9,7 @@ using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using LazyGatherer.Solver.Gathering.Models;
 using LazyGatherer.UI;
+using LazyGatherer.UI.Node;
 
 namespace LazyGatherer.Controller;
 

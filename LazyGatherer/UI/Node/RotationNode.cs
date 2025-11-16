@@ -7,7 +7,7 @@ using LazyGatherer.Models;
 using LazyGatherer.Solver.Gathering.Actions;
 using LazyGatherer.Solver.Gathering.Models;
 
-namespace LazyGatherer.UI;
+namespace LazyGatherer.UI.Node;
 
 public sealed class RotationNode : CustomNode
 {
@@ -22,11 +22,13 @@ public sealed class RotationNode : CustomNode
         var index = 0u;
         foreach (var (baseAction, count) in CompactActions(outcome.Key.Actions))
         {
-            AttachNode(new ActionNode(gatheringContext, baseAction, count)
+            AttachNode(new ActionNode
             {
                 IsVisible = true,
                 Position = new Vector2(44 * index, 0),
                 Size = new Vector2(48, 48),
+                Count = count,
+                ActionId = GetGathererAction(baseAction, gatheringContext)
             });
             index++;
         }
@@ -66,7 +68,7 @@ public sealed class RotationNode : CustomNode
             estimatedYieldNode.IsVisible = config.DisplayEstimatedYield;
     }
 
-    private static String FormatEstimatedYield(GatheringOutcome outcome)
+    private static string FormatEstimatedYield(GatheringOutcome outcome)
     {
         var roundedYield = Math.Round(outcome.Yield, 1);
         var roundedMinYield = Math.Round(outcome.MinYield, 1);
@@ -84,4 +86,11 @@ public sealed class RotationNode : CustomNode
             _ => $"Estimated yield: {roundedYield}"
         };
     }
+
+    private static uint GetGathererAction(BaseAction action, GatheringContext context) => context.Job switch
+    {
+        Job.Min => action.MinerAction.RowId,
+        Job.Bot => action.BotanistAction.RowId,
+        _ => 0u
+    };
 }

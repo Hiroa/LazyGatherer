@@ -1,19 +1,21 @@
-﻿using FFXIVClientStructs.FFXIV.Common.Math;
+﻿using Dalamud.Utility;
+using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using LazyGatherer.Models;
-using LazyGatherer.Solver.Gathering.Actions;
-using LazyGatherer.Solver.Gathering.Models;
+using KamiToolKit.System;
+using Lumina.Excel.Sheets;
+using Vector3 = System.Numerics.Vector3;
 
 namespace LazyGatherer.UI;
 
-public sealed class ActionNode : CustomNode
+public sealed class ActionNode : ButtonBase
 {
     private readonly IconImageNode iconNode;
     private readonly SimpleImageNode backgroundNode;
     private readonly TextNode countNode;
 
-    public ActionNode(GatheringContext context, BaseAction action, int count)
+    public ActionNode()
     {
         // Icon node for action
         AttachNode(iconNode = new IconImageNode()
@@ -21,7 +23,6 @@ public sealed class ActionNode : CustomNode
             Position = new Vector2(4f, 4f),
             Size = new Vector2(40, 40),
             TextureSize = new Vector2(40, 40),
-            IconId = GetGathererIconId(action, context),
             IsVisible = true
         });
 
@@ -43,17 +44,45 @@ public sealed class ActionNode : CustomNode
             AlignmentType = AlignmentType.Right,
             Position = new Vector2(4f, 4f),
             Size = new Vector2(40, 14),
-            SeString = $"x{count}",
             TextFlags = TextFlags.Edge,
             FontSize = 14,
-            IsVisible = count > 1
         });
+
+        InitializeComponentEvents();
     }
 
-    private static uint GetGathererIconId(BaseAction action, GatheringContext context) => context.Job switch
+    public int Count
     {
-        Job.Min => action.MinerAction.Icon,
-        Job.Bot => action.BotanistAction.Icon,
-        _ => 0u
-    };
+        set
+        {
+            countNode.SeString = $"x{value}";
+            countNode.IsVisible = value > 1;
+        }
+    }
+
+    public bool Enabled
+    {
+        get => iconNode.MultiplyColor.X >= 1f;
+        set => iconNode.MultiplyColor = value ? new Vector3(1f) : new Vector3(0.5f);
+    }
+
+    public uint ActionId
+    {
+        set
+        {
+            var action = Service.DataManager.Excel.GetSheet<Action>()[value];
+            iconNode.LoadIcon(action.Icon);
+            Tooltip = action.Name.ToDalamudString().TextValue;
+        }
+    }
+
+    public bool CanBeToggle
+    {
+        set { OnClick = value ? () => Enabled = !Enabled : null; }
+    }
+
+    private void AttachNode(NodeBase node)
+    {
+        Service.NativeController.AttachNode(node, this, NodePosition.AsLastChild);
+    }
 }
