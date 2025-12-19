@@ -37,7 +37,7 @@ public sealed class RotationNode : SimpleComponentNode
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             FontSize = 14,
             SeString = FormatEstimatedYield(outcome.Value),
-            IsVisible = true,
+            IsVisible = Service.Config.DisplayEstimatedYield,
         };
         estimatedYieldNode.AttachNode(this);
     }

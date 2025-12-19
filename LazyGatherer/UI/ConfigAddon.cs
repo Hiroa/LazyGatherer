@@ -111,7 +111,6 @@ public class ConfigAddon : NativeAddon
             {
                 Service.Config.EstimatedYieldStyle = estimatedYieldStyleOptions
                                                      .First(kvp => kvp.Value == selectedItem).Key;
-                ;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
