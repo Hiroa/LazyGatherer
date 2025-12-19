@@ -1,7 +1,6 @@
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using KamiToolKit;
 using LazyGatherer.Controller;
 using LazyGatherer.Models;
 using LazyGatherer.UI;
@@ -40,7 +39,6 @@ namespace LazyGatherer
         internal static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
 
         // Plugin service
-        internal static NativeController NativeController { get; set; }
         internal static Config Config { get; set; }
 
         internal static ConfigAddon ConfigAddon { get; set; }

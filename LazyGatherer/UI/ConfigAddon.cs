@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Addon;
+using KamiToolKit;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using LazyGatherer.Models;
@@ -31,7 +31,8 @@ public class ConfigAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
-        AttachNode(new TextNode
+        SetWindowSize(new Vector2(270.0f, 284.0f));
+        new TextNode
         {
             SeString = "Display options",
             TextColor = ColorHelper.GetColor(8),
@@ -40,9 +41,9 @@ public class ConfigAddon : NativeAddon
             Size = new Vector2(200, 20),
             FontSize = 14,
             Position = new Vector2(10, 45),
-        });
+        }.AttachNode(this);
 
-        AttachNode(displayNode = new CheckboxNode
+        displayNode = new CheckboxNode
         {
             SeString = "Display Rotation",
             IsChecked = Service.Config.Display,
@@ -55,9 +56,10 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update();
             }
-        });
+        };
+        displayNode.AttachNode(this);
 
-        AttachNode(new CheckboxNode
+        new CheckboxNode
         {
             SeString = "Display max GP slider",
             IsChecked = Service.Config.DisplayGpSlider,
@@ -70,9 +72,9 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update();
             }
-        });
+        }.AttachNode(this);
 
-        AttachNode(new CheckboxNode
+        new CheckboxNode
         {
             SeString = "Display estimated yield",
             IsChecked = Service.Config.DisplayEstimatedYield,
@@ -85,9 +87,9 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update();
             }
-        });
+        }.AttachNode(this);
 
-        AttachNode(new TextNode
+        new TextNode
         {
             SeString = "Estimated yield display style:",
             TextColor = ColorHelper.GetColor(8),
@@ -96,12 +98,12 @@ public class ConfigAddon : NativeAddon
             Size = new Vector2(200, 20),
             FontSize = 14,
             Position = new Vector2(48, 125),
-        });
+        }.AttachNode(this);
 
-        AttachNode(new TextDropDownNode()
+        new TextDropDownNode()
         {
             IsVisible = true,
-            Size = new Vector2(220, 24),
+            Size = new Vector2(200, 24),
             Position = new Vector2(48, 145),
             Options = estimatedYieldStyleOptions.Values.ToList(),
             SelectedOption = estimatedYieldStyleOptions[Service.Config.EstimatedYieldStyle],
@@ -113,11 +115,11 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
-        });
+        }.AttachNode(this);
 
         // Rotation options
 
-        AttachNode(new TextNode
+        new TextNode
         {
             SeString = "Rotation options",
             TextColor = ColorHelper.GetColor(8),
@@ -126,9 +128,9 @@ public class ConfigAddon : NativeAddon
             Size = new Vector2(200, 20),
             FontSize = 14,
             Position = new Vector2(10, 179),
-        });
+        }.AttachNode(this);
 
-        AttachNode(new CheckboxNode
+        new CheckboxNode
         {
             SeString = "One turn rotation",
             IsChecked = Service.Config.OneTurnRotation,
@@ -141,9 +143,9 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             }
-        });
+        }.AttachNode(this);
 
-        AttachNode(new TextNode
+        new TextNode
         {
             SeString = "Rotation calculator:",
             TextColor = ColorHelper.GetColor(8),
@@ -152,12 +154,12 @@ public class ConfigAddon : NativeAddon
             Size = new Vector2(200, 20),
             FontSize = 14,
             Position = new Vector2(28, 219),
-        });
+        }.AttachNode(this);
 
-        AttachNode(new TextDropDownNode()
+        new TextDropDownNode()
         {
             IsVisible = true,
-            Size = new Vector2(240, 24),
+            Size = new Vector2(220, 24),
             Position = new Vector2(28, 239),
             Options = calculatorOptions.Values.ToList(),
             SelectedOption = calculatorOptions[Service.Config.RotationCalculator],
@@ -168,7 +170,7 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
-        });
+        }.AttachNode(this);
     }
 
     protected override unsafe void OnUpdate(AtkUnitBase* addon)

@@ -7,7 +7,7 @@ using LazyGatherer.Solver.Models;
 
 namespace LazyGatherer.UI;
 
-public sealed class ActionNode : CustomNode
+public sealed class ActionNode : ButtonBase
 {
     private readonly IconImageNode iconNode;
     private readonly SimpleImageNode backgroundNode;
@@ -16,17 +16,18 @@ public sealed class ActionNode : CustomNode
     public ActionNode(GatheringContext context, BaseAction action, int count)
     {
         // Icon node for action
-        AttachNode(iconNode = new IconImageNode()
+        iconNode = new IconImageNode()
         {
             Position = new Vector2(4f, 4f),
             Size = new Vector2(40, 40),
             TextureSize = new Vector2(40, 40),
             IconId = GetGathererIconId(action, context),
             IsVisible = true
-        });
+        };
+        iconNode.AttachNode(this);
 
         // Background node for icon
-        AttachNode(backgroundNode = new SimpleImageNode()
+        backgroundNode = new SimpleImageNode()
         {
             Position = new Vector2(0, 0),
             Size = new Vector2(48, 48),
@@ -34,11 +35,12 @@ public sealed class ActionNode : CustomNode
             TextureSize = new Vector2(48, 48),
             IsVisible = true,
             ImageNodeFlags = 0
-        });
+        };
         backgroundNode.LoadTexture("ui/uld/IconA_Frame.tex");
+        backgroundNode.AttachNode(this);
 
         // Text node for count
-        AttachNode(countNode = new TextNode
+        countNode = new TextNode
         {
             AlignmentType = AlignmentType.Right,
             Position = new Vector2(4f, 4f),
@@ -47,7 +49,8 @@ public sealed class ActionNode : CustomNode
             TextFlags = TextFlags.Edge,
             FontSize = 14,
             IsVisible = count > 1
-        });
+        };
+        countNode.AttachNode(this);
     }
 
     private static uint GetGathererIconId(BaseAction action, GatheringContext context) => context.Job switch

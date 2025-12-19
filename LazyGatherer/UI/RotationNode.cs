@@ -9,7 +9,7 @@ using LazyGatherer.Solver.Models;
 
 namespace LazyGatherer.UI;
 
-public sealed class RotationNode : CustomNode
+public sealed class RotationNode : SimpleComponentNode
 {
     private readonly TextNode? estimatedYieldNode;
 
@@ -22,23 +22,24 @@ public sealed class RotationNode : CustomNode
         var index = 0u;
         foreach (var (baseAction, count) in CompactActions(outcome.Key.Actions))
         {
-            AttachNode(new ActionNode(gatheringContext, baseAction, count)
+            new ActionNode(gatheringContext, baseAction, count)
             {
                 IsVisible = true,
                 Position = new Vector2(44 * index, 0),
                 Size = new Vector2(48, 48),
-            });
+            }.AttachNode(this);
             index++;
         }
 
-        AttachNode(estimatedYieldNode = new TextNode
+        estimatedYieldNode = new TextNode
         {
             Position = new Vector2(4f + (44 * index), 26),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             FontSize = 14,
             SeString = FormatEstimatedYield(outcome.Value),
             IsVisible = true,
-        });
+        };
+        estimatedYieldNode.AttachNode(this);
     }
 
     /**

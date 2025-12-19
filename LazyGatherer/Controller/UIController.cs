@@ -4,8 +4,7 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
-using KamiToolKit.Classes;
+using KamiToolKit.Classes.Controllers;
 using KamiToolKit.Nodes;
 using LazyGatherer.Solver.Models;
 using LazyGatherer.UI;
@@ -80,7 +79,7 @@ public class UIController : IDisposable
         {
             var rotationNode = new RotationNode(go);
             rotationNodes.Add(rotationNode);
-            Service.NativeController.AttachNode(rotationNode, gatheringAddon->RootNode, NodePosition.AsLastChild);
+            rotationNode.AttachNode(gatheringAddon->RootNode);
         }
     }
 
@@ -88,7 +87,7 @@ public class UIController : IDisposable
     {
         if (gatheringAddon != null)
         {
-            rotationNodes.ForEach(r => Service.NativeController.DetachNode(r));
+            rotationNodes.ForEach(r => r.DetachNode());
         }
 
         rotationNodes.ForEach(r => r.Dispose());
@@ -100,7 +99,7 @@ public class UIController : IDisposable
         if (gatheringAddon == null)
             return;
 
-        Service.NativeController.AttachNode(configButtonNode = new CircleButtonNode
+        configButtonNode = new CircleButtonNode
         {
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
@@ -108,10 +107,11 @@ public class UIController : IDisposable
             Tooltip = "LazyGatherer Configuration",
             IsVisible = true,
             OnClick = () => Service.ConfigAddon.Toggle(),
-        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
+        };
+        configButtonNode.AttachNode(gatheringAddon->RootNode);
 
 
-        Service.NativeController.AttachNode(displayButtonNode = new CircleButtonNode
+        displayButtonNode = new CircleButtonNode
         {
             Position = new Vector2(428.0f, 8.0f),
             Size = new Vector2(24f, 24f),
@@ -124,15 +124,17 @@ public class UIController : IDisposable
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update();
             }
-        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
+        };
+        displayButtonNode.AttachNode(gatheringAddon->RootNode);
 
         var maxGp = Service.ClientState.LocalPlayer?.MaxGp ?? 1500;
-        Service.NativeController.AttachNode(sliderNode = new GpSliderNode((int)maxGp)
+        sliderNode = new GpSliderNode((int)maxGp)
         {
             Position = new Vector2(320, 460),
             Size = new Vector2(200, 28),
             IsVisible = Service.Config.Display && Service.Config.DisplayGpSlider,
-        }, gatheringAddon->RootNode, NodePosition.AsLastChild);
+        };
+        sliderNode.AttachNode(gatheringAddon->RootNode);
     }
 
 
@@ -140,21 +142,21 @@ public class UIController : IDisposable
     {
         if (configButtonNode != null)
         {
-            Service.NativeController.DetachNode(configButtonNode);
+            configButtonNode.DetachNode();
             configButtonNode.Dispose();
             configButtonNode = null;
         }
 
         if (displayButtonNode != null)
         {
-            Service.NativeController.DetachNode(displayButtonNode);
+            displayButtonNode.DetachNode();
             displayButtonNode.Dispose();
             displayButtonNode = null;
         }
 
         if (sliderNode != null)
         {
-            Service.NativeController.DetachNode(sliderNode);
+            sliderNode.DetachNode();
             sliderNode.Dispose();
             sliderNode = null;
         }

@@ -5,7 +5,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
+using KamiToolKit.Classes.Controllers;
 using LazyGatherer.Components;
 using LazyGatherer.Models;
 using LazyGatherer.Solver;

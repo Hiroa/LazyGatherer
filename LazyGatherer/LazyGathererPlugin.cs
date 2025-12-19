@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Dalamud.Plugin;
+﻿using Dalamud.Plugin;
 using KamiToolKit;
 using LazyGatherer.Controller;
 using LazyGatherer.Models;
@@ -12,17 +11,10 @@ namespace LazyGatherer
         public LazyGathererPlugin(IDalamudPluginInterface pluginInterface)
         {
             pluginInterface.Create<Service>();
-            Service.NativeController = new NativeController(pluginInterface);
+            KamiToolKitLibrary.Initialize(pluginInterface);
 
             Service.Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
-            Service.ConfigAddon = new ConfigAddon
-            {
-                Size = new Vector2(290.0f, 284.0f),
-                Position = new Vector2(300.0f, 300.0f),
-                InternalName = "LazyGathererConfig",
-                NativeController = Service.NativeController,
-                Title = "LazyGatherer configuration",
-            };
+            Service.ConfigAddon = GetConfigAddon();
 
             Service.GatheringController = new GatheringController();
             Service.UIController = new UIController();
@@ -36,10 +28,16 @@ namespace LazyGatherer
             Service.UIController.Dispose();
             Service.GatheringController.Dispose();
             Service.ConfigAddon.Dispose();
-            Service.NativeController.Dispose();
+            KamiToolKitLibrary.Dispose();
         }
 
         private static void OpenConfig()
             => Service.ConfigAddon.Toggle();
+
+        private static ConfigAddon GetConfigAddon() => new ConfigAddon
+        {
+            InternalName = "LazyGathererConfig",
+            Title = "LazyGatherer configuration",
+        };
     }
 }
