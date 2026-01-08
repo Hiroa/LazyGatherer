@@ -31,7 +31,7 @@ public class ConfigAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon)
     {
-        SetWindowSize(new Vector2(270.0f, 284.0f));
+        SetWindowSize(new Vector2(300.0f, 284.0f));
         new TextNode
         {
             SeString = "Display options",
@@ -143,6 +143,18 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             }
+        }.AttachNode(this);
+
+        new SimpleImageNode
+        {
+            Size = new Vector2(28, 28),
+            Position = new Vector2(260, 195),
+            IsVisible = true,
+            TexturePath = "ui/uld/CircleButtons.tex",
+            TextureSize = new Vector2(28.0f, 28.0f),
+            TextureCoordinates = new Vector2(112.0f, 84.0f),
+            Tooltip = "Force solver to compute a rotation that do not use actions after the first gathering.\n" +
+                      "This may result in suboptimal rotations, but can be useful for quick gathering.",
         }.AttachNode(this);
 
         new TextNode
