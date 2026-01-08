@@ -2,7 +2,7 @@
 using KamiToolKit;
 using LazyGatherer.Controller;
 using LazyGatherer.Models;
-using LazyGatherer.UI;
+using LazyGatherer.UI.Addon;
 
 namespace LazyGatherer
 {
@@ -17,7 +17,9 @@ namespace LazyGatherer
             Service.ConfigAddon = GetConfigAddon();
 
             Service.GatheringController = new GatheringController();
+            Service.MasterpieceController = new MasterpieceController();
             Service.UIController = new UIController();
+            Service.Hooks = new Hooks();
 
             Service.Interface.UiBuilder.OpenConfigUi += OpenConfig;
         }
@@ -25,7 +27,9 @@ namespace LazyGatherer
         public void Dispose()
         {
             Service.Interface.UiBuilder.OpenConfigUi -= OpenConfig;
+            Service.Hooks.Dispose();
             Service.UIController.Dispose();
+            Service.MasterpieceController.Dispose();
             Service.GatheringController.Dispose();
             Service.ConfigAddon.Dispose();
             KamiToolKitLibrary.Dispose();

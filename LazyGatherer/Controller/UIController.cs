@@ -6,8 +6,8 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes.Controllers;
 using KamiToolKit.Nodes;
-using LazyGatherer.Solver.Models;
-using LazyGatherer.UI;
+using LazyGatherer.Gathering.Models;
+using LazyGatherer.UI.Node;
 
 namespace LazyGatherer.Controller;
 
@@ -104,7 +104,7 @@ public class UIController : IDisposable
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
             Icon = ButtonIcon.GearCog,
-            Tooltip = "LazyGatherer Configuration",
+            Tooltip = "[LazyGatherer] Configuration",
             IsVisible = true,
             OnClick = () => Service.ConfigAddon.Toggle(),
         };
@@ -116,7 +116,7 @@ public class UIController : IDisposable
             Position = new Vector2(428.0f, 8.0f),
             Size = new Vector2(24f, 24f),
             Icon = ButtonIcon.Eye,
-            Tooltip = "LazyGatherer display",
+            Tooltip = "[LazyGatherer] Toggle display",
             IsVisible = true,
             OnClick = () =>
             {
@@ -127,7 +127,7 @@ public class UIController : IDisposable
         };
         displayButtonNode.AttachNode(gatheringAddon->RootNode);
 
-        var maxGp = Service.ClientState.LocalPlayer?.MaxGp ?? 1500;
+        var maxGp = Service.ObjectTable.LocalPlayer?.MaxGp ?? 1500;
         sliderNode = new GpSliderNode((int)maxGp)
         {
             Position = new Vector2(320, 460),
