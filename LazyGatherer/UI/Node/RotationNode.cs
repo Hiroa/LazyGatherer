@@ -19,7 +19,7 @@ public sealed class RotationNode : SimpleComponentNode
     public RotationNode(KeyValuePair<Rotation, GatheringOutcome> outcome)
     {
         var gatheringContext = outcome.Key.Context;
-        Position = new Vector2(501.0f, 68f + (44.0f * gatheringContext.RowId));
+        Position = new Vector2(501.0f, 71f + (44.0f * gatheringContext.RowId));
         IsVisible = Service.Config.Display;
 
         backgroundNode = new SimpleNineGridNode
@@ -31,6 +31,7 @@ public sealed class RotationNode : SimpleComponentNode
             TextureSize = new Vector2(24, 24),
             Offsets = new Vector4(10, 10, 10, 10),
             IsVisible = true,
+            Alpha = 0.8f
         };
         backgroundNode.AttachNode(this);
 
@@ -40,17 +41,18 @@ public sealed class RotationNode : SimpleComponentNode
             new ActionNode
             {
                 IsVisible = true,
-                Position = new Vector2(44 * index, 0),
+                Position = new Vector2(39 * index, 0),
                 Size = new Vector2(48, 48),
                 Count = count,
                 ActionId = GetGathererAction(baseAction, gatheringContext),
+                Scale = new Vector2(0.9f, 0.9f),
             }.AttachNode(this);
             index++;
         }
 
         estimatedYieldNode = new TextNode
         {
-            Position = new Vector2(4f + (44 * index), 26),
+            Position = new Vector2(4f + (39 * index), 23),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             TextColor = ColorHelper.GetColor(2),
             FontSize = 14,
