@@ -14,12 +14,25 @@ namespace LazyGatherer.UI.Node;
 public sealed class RotationNode : SimpleComponentNode
 {
     private readonly TextNode? estimatedYieldNode;
+    private readonly SimpleNineGridNode? backgroundNode;
 
     public RotationNode(KeyValuePair<Rotation, GatheringOutcome> outcome)
     {
         var gatheringContext = outcome.Key.Context;
-        Position = new Vector2(496.0f, 68f + (44.0f * gatheringContext.RowId));
+        Position = new Vector2(501.0f, 68f + (44.0f * gatheringContext.RowId));
         IsVisible = Service.Config.Display;
+
+        backgroundNode = new SimpleNineGridNode
+        {
+            Position = new Vector2(-5f, -5f),
+            Size = new Vector2(496f, 58f),
+            TexturePath = "ui/uld/Gathering_hr1.tex",
+            TextureCoordinates = new Vector2(72, 84),
+            TextureSize = new Vector2(24, 24),
+            Offsets = new Vector4(10, 10, 10, 10),
+            IsVisible = true,
+        };
+        backgroundNode.AttachNode(this);
 
         var index = 0u;
         foreach (var (baseAction, count) in CompactActions(outcome.Key.Actions))
@@ -45,6 +58,9 @@ public sealed class RotationNode : SimpleComponentNode
             IsVisible = Service.Config.DisplayEstimatedYield,
         };
         estimatedYieldNode.AttachNode(this);
+
+        var nodeSize = estimatedYieldNode.Position + estimatedYieldNode.GetTextDrawSize();
+        this.UpdateSize(nodeSize);
     }
 
     /**
@@ -62,6 +78,12 @@ public sealed class RotationNode : SimpleComponentNode
         }
 
         return dictionary;
+    }
+
+    public void UpdateSize(Vector2 size)
+    {
+        Size = size;
+        backgroundNode?.Size = size + new Vector2(15f, 10f);
     }
 
     public void Update()
