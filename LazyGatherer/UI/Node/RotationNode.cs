@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using FFXIVClientStructs.FFXIV.Common.Math;
+using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -15,6 +15,17 @@ public sealed class RotationNode : SimpleComponentNode
 {
     private readonly TextNode? estimatedYieldNode;
     private readonly SimpleNineGridNode? backgroundNode;
+    private readonly int actionNodeCount;
+
+    public override Vector2 Size
+    {
+        get;
+        set
+        {
+            field = value;
+            UpdateBackgroundSize(value);
+        }
+    }
 
     public RotationNode(KeyValuePair<Rotation, GatheringOutcome> outcome)
     {
@@ -35,24 +46,23 @@ public sealed class RotationNode : SimpleComponentNode
         };
         backgroundNode.AttachNode(this);
 
-        var index = 0u;
         foreach (var (baseAction, count) in CompactActions(outcome.Key.Actions))
         {
             new ActionNode
             {
                 IsVisible = true,
-                Position = new Vector2(39 * index, 0),
+                Position = new Vector2(39 * actionNodeCount, 0),
                 Size = new Vector2(48, 48),
                 Count = count,
                 ActionId = GetGathererAction(baseAction, gatheringContext),
                 Scale = new Vector2(0.9f, 0.9f),
             }.AttachNode(this);
-            index++;
+            actionNodeCount++;
         }
 
         estimatedYieldNode = new TextNode
         {
-            Position = new Vector2(4f + (39 * index), 23),
+            Position = new Vector2(4f + (39 * actionNodeCount), 23),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             TextColor = ColorHelper.GetColor(2),
             FontSize = 14,
@@ -61,8 +71,8 @@ public sealed class RotationNode : SimpleComponentNode
         };
         estimatedYieldNode.AttachNode(this);
 
-        var nodeSize = estimatedYieldNode.Position + estimatedYieldNode.GetTextDrawSize();
-        this.UpdateSize(nodeSize);
+
+        Size = ComputeSize();
     }
 
     /**
@@ -82,18 +92,12 @@ public sealed class RotationNode : SimpleComponentNode
         return dictionary;
     }
 
-    public void UpdateSize(Vector2 size)
-    {
-        Size = size;
-        backgroundNode?.Size = size + new Vector2(15f, 10f);
-    }
-
     public void Update()
     {
         var config = Service.Config;
         IsVisible = config.Display;
-        if (estimatedYieldNode != null)
-            estimatedYieldNode.IsVisible = config.DisplayEstimatedYield;
+        estimatedYieldNode?.IsVisible = config.DisplayEstimatedYield;
+        Size = ComputeSize();
     }
 
     private static string FormatEstimatedYield(GatheringOutcome outcome)
@@ -121,4 +125,17 @@ public sealed class RotationNode : SimpleComponentNode
         Job.Bot => action.BotanistAction.RowId,
         _ => 0u
     };
+
+    private void UpdateBackgroundSize(Vector2 size)
+    {
+        backgroundNode?.Size = size + new Vector2(20f, 10f); // Account for background padding
+    }
+
+    private Vector2 ComputeSize()
+    {
+        var size = new Vector2(39 * actionNodeCount, 40f);
+        return estimatedYieldNode is { IsVisible: true }
+                   ? size + new Vector2(4f, 0f) + estimatedYieldNode.GetTextDrawSize(false) with { Y = 0 }
+                   : size - new Vector2(5f, 0f);
+    }
 }

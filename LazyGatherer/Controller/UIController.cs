@@ -60,12 +60,12 @@ public class UIController : IDisposable
 
     public void Update()
     {
-        if (sliderNode != null)
-        {
-            sliderNode.IsVisible = Service.Config.Display && Service.Config.DisplayGpSlider;
-        }
+        sliderNode?.IsVisible = Service.Config.Display && Service.Config.DisplayGpSlider;
 
         rotationNodes.ForEach(r => r.Update());
+        // Uniform sizing
+        var biggestNodeSize = rotationNodes.MaxBy(r => r.Size.X)?.Size ?? Vector2.Zero;
+        rotationNodes.ForEach(r => r.Size = biggestNodeSize);
     }
 
     public unsafe void DrawRotations(List<KeyValuePair<Rotation, GatheringOutcome>> gatheringOutcomes)
@@ -91,10 +91,7 @@ public class UIController : IDisposable
         }
 
         // Update all nodes to the biggest size
-        foreach (var rotationNode in rotationNodes)
-        {
-            rotationNode.UpdateSize(biggestNodeSize);
-        }
+        rotationNodes.ForEach(r => r.Size = biggestNodeSize);
     }
 
     private unsafe void ClearRotations(AtkUnitBase* gatheringAddon)
