@@ -79,11 +79,21 @@ public class UIController : IDisposable
         // Clear existing rotations first
         ClearRotations(gatheringAddon);
 
+        var biggestNodeSize = Vector2.Zero;
         foreach (var go in gatheringOutcomes)
         {
             var rotationNode = new RotationNode(go);
             rotationNodes.Add(rotationNode);
             rotationNode.AttachNode(gatheringAddon->RootNode);
+            // Determine biggest node for uniform sizing
+            if (rotationNode.Size.X > biggestNodeSize.X)
+                biggestNodeSize = rotationNode.Size;
+        }
+
+        // Update all nodes to the biggest size
+        foreach (var rotationNode in rotationNodes)
+        {
+            rotationNode.UpdateSize(biggestNodeSize);
         }
     }
 
