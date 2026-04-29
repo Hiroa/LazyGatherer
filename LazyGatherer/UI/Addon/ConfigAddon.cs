@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using LazyGatherer.Models;
 
 namespace LazyGatherer.UI.Addon;
@@ -29,12 +31,12 @@ public class ConfigAddon : NativeAddon
         { EstimatedYieldStyle.DetailedWithMinMax, "Detailed with min/max" }
     };
 
-    protected override unsafe void OnSetup(AtkUnitBase* addon)
+    protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         SetWindowSize(new Vector2(300.0f, 284.0f));
         new TextNode
         {
-            SeString = "Display options",
+            String = "Display options",
             TextColor = ColorHelper.GetColor(8),
             TextFlags = TextFlags.Edge,
             IsVisible = true,
@@ -45,7 +47,7 @@ public class ConfigAddon : NativeAddon
 
         displayNode = new CheckboxNode
         {
-            SeString = "Display Rotation",
+            String = "Display Rotation",
             IsChecked = Service.Config.Display,
             IsVisible = true,
             Size = new Vector2(150, 20),
@@ -61,7 +63,7 @@ public class ConfigAddon : NativeAddon
 
         new CheckboxNode
         {
-            SeString = "Display max GP slider",
+            String = "Display max GP slider",
             IsChecked = Service.Config.DisplayGpSlider,
             IsVisible = true,
             Size = new Vector2(150, 20),
@@ -76,7 +78,7 @@ public class ConfigAddon : NativeAddon
 
         new CheckboxNode
         {
-            SeString = "Display estimated yield",
+            String = "Display estimated yield",
             IsChecked = Service.Config.DisplayEstimatedYield,
             IsVisible = true,
             Size = new Vector2(150, 20),
@@ -91,7 +93,7 @@ public class ConfigAddon : NativeAddon
 
         new TextNode
         {
-            SeString = "Estimated yield display style:",
+            String = "Estimated yield display style:",
             TextColor = ColorHelper.GetColor(8),
             TextFlags = TextFlags.Edge,
             IsVisible = true,
@@ -120,7 +122,7 @@ public class ConfigAddon : NativeAddon
 
         new TextNode
         {
-            SeString = "Rotation options",
+            String = "Rotation options",
             TextColor = ColorHelper.GetColor(8),
             TextFlags = TextFlags.Edge,
             IsVisible = true,
@@ -131,7 +133,7 @@ public class ConfigAddon : NativeAddon
 
         new CheckboxNode
         {
-            SeString = "One turn rotation",
+            String = "One turn rotation",
             IsChecked = Service.Config.OneTurnRotation,
             IsVisible = true,
             Size = new Vector2(150, 20),
@@ -152,13 +154,13 @@ public class ConfigAddon : NativeAddon
             TexturePath = "ui/uld/CircleButtons.tex",
             TextureSize = new Vector2(28.0f, 28.0f),
             TextureCoordinates = new Vector2(112.0f, 84.0f),
-            Tooltip = "Force solver to compute a rotation that do not use actions after the first gathering.\n" +
-                      "This may result in suboptimal rotations, but can be useful for quick gathering.",
+            TextTooltip = "Force solver to compute a rotation that do not use actions after the first gathering.\n" +
+                          "This may result in suboptimal rotations, but can be useful for quick gathering.",
         }.AttachNode(this);
 
         new TextNode
         {
-            SeString = "Rotation calculator:",
+            String = "Rotation calculator:",
             TextColor = ColorHelper.GetColor(8),
             TextFlags = TextFlags.Edge,
             IsVisible = true,

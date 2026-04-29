@@ -4,7 +4,7 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Controllers;
+using KamiToolKit.Controllers;
 using KamiToolKit.Nodes;
 using LazyGatherer.Gathering.Models;
 using LazyGatherer.UI.Node;
@@ -13,7 +13,7 @@ namespace LazyGatherer.Controller;
 
 public class UIController : IDisposable
 {
-    private readonly AddonController addonController = new("Gathering");
+    private readonly AddonController addonController;
     private readonly List<RotationNode> rotationNodes = [];
     private CircleButtonNode? configButtonNode;
     private CircleButtonNode? displayButtonNode;
@@ -21,9 +21,13 @@ public class UIController : IDisposable
 
     public unsafe UIController()
     {
-        addonController.OnAttach += OnGatheringPostSetup;
-        addonController.OnDetach += OnGatheringPreFinalize;
-        addonController.OnUpdate += OnGatheringPostUpdate;
+        addonController = new AddonController
+        {
+            AddonName = "Gathering",
+            OnSetup = OnGatheringPostSetup,
+            OnFinalize = OnGatheringPreFinalize,
+            OnUpdate = OnGatheringPostUpdate
+        };
         addonController.Enable();
     }
 
@@ -104,7 +108,7 @@ public class UIController : IDisposable
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
             Icon = ButtonIcon.GearCog,
-            Tooltip = "[LazyGatherer] Configuration",
+            TextTooltip = "[LazyGatherer] Configuration",
             IsVisible = true,
             OnClick = () => Service.ConfigAddon.Toggle(),
         };
@@ -116,7 +120,7 @@ public class UIController : IDisposable
             Position = new Vector2(428.0f, 8.0f),
             Size = new Vector2(24f, 24f),
             Icon = ButtonIcon.Eye,
-            Tooltip = "[LazyGatherer] Toggle display",
+            TextTooltip = "[LazyGatherer] Toggle display",
             IsVisible = true,
             OnClick = () =>
             {

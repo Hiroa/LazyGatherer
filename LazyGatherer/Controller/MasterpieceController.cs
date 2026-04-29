@@ -4,9 +4,9 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Controllers;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Controllers;
 using KamiToolKit.Nodes;
+using KamiToolKit.Timelines;
 using LazyGatherer.Collectable;
 using LazyGatherer.Collectable.Presets;
 using LazyGatherer.Models;
@@ -15,7 +15,7 @@ namespace LazyGatherer.Controller;
 
 public unsafe class MasterpieceController : IDisposable
 {
-    private readonly AddonController addonController = new("GatheringMasterpiece");
+    private readonly AddonController addonController;
 
     // UI Nodes
     private readonly Dictionary<Tuple<uint, uint>, AntsNode> antsNodes = [];
@@ -29,9 +29,13 @@ public unsafe class MasterpieceController : IDisposable
 
     public MasterpieceController()
     {
-        addonController.OnAttach += OnGatheringAddonPostEnable;
-        addonController.OnDetach += OnGatheringAddonClose;
-        addonController.OnUpdate += OnGatheringAddonUpdate;
+        addonController = new AddonController
+        {
+            AddonName = "GatheringMasterpiece",
+            OnSetup = OnGatheringAddonPostEnable,
+            OnFinalize = OnGatheringAddonClose,
+            OnUpdate = OnGatheringAddonUpdate,
+        };
         addonController.Enable();
     }
 
@@ -93,7 +97,7 @@ public unsafe class MasterpieceController : IDisposable
             Position = new Vector2(38, 645),
             Size = new Vector2(28, 28),
             Icon = ButtonIcon.Eye,
-            Tooltip = "[LazyGatherer] Toggle display",
+            TextTooltip = "[LazyGatherer] Toggle display",
             IsVisible = true,
             OnClick = () =>
             {
@@ -109,7 +113,7 @@ public unsafe class MasterpieceController : IDisposable
             Size = new Vector2(180.0f, 24.0f),
             Position = new Vector2(10.0f, 248.0f),
             IsVisible = true,
-            Tooltip = "[LazyGatherer] Select collectable rotation preset",
+            TextTooltip = "[LazyGatherer] Select collectable rotation preset",
             Options = BuiltIn.Presets.Keys.ToList(),
             OnOptionSelected = index =>
             {

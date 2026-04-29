@@ -2,6 +2,7 @@
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using Lumina.Excel.Sheets;
 using Vector3 = System.Numerics.Vector3;
 
@@ -56,7 +57,7 @@ public sealed class ActionNode : ButtonBase
     {
         set
         {
-            countNode.SeString = $"x{value}";
+            countNode.String = $"x{value}";
             countNode.IsVisible = value > 1;
         }
     }
@@ -73,7 +74,7 @@ public sealed class ActionNode : ButtonBase
         {
             var action = Service.DataManager.Excel.GetSheet<Action>()[value];
             iconNode.LoadIcon(action.Icon);
-            Tooltip = action.Name.ToDalamudString().TextValue;
+            TextTooltip = action.Name.ToDalamudString().TextValue;
         }
     }
 

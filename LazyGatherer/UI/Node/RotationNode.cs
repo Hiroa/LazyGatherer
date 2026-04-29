@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using LazyGatherer.Gathering.Actions;
 using LazyGatherer.Gathering.Models;
 using LazyGatherer.Models;
@@ -38,7 +39,7 @@ public sealed class RotationNode : SimpleComponentNode
             Position = new Vector2(4f + (44 * index), 26),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
             FontSize = 14,
-            SeString = FormatEstimatedYield(outcome.Value),
+            String = FormatEstimatedYield(outcome.Value),
             IsVisible = Service.Config.DisplayEstimatedYield,
         };
         estimatedYieldNode.AttachNode(this);

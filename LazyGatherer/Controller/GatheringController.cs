@@ -5,7 +5,7 @@ using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes.Controllers;
+using KamiToolKit.Controllers;
 using LazyGatherer.Components;
 using LazyGatherer.Gathering;
 using LazyGatherer.Gathering.Comparator;
@@ -26,9 +26,12 @@ public class GatheringController : IDisposable
 
     public unsafe GatheringController()
     {
-        addonController = new AddonController("Gathering");
-        addonController.OnDetach += OnGatheringAddonClose;
-        addonController.OnUpdate += OnGatheringAddonUpdate;
+        addonController = new AddonController
+        {
+            AddonName = "Gathering",
+            OnFinalize = OnGatheringAddonClose,
+            OnUpdate = OnGatheringAddonUpdate
+        };
         addonController.Enable();
     }
 
