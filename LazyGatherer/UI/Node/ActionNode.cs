@@ -1,6 +1,7 @@
 ﻿using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node.Simple;
 using Lumina.Excel.Sheets;
@@ -47,6 +48,7 @@ public sealed class ActionNode : ButtonBase
             Size = new Vector2(40, 14),
             TextFlags = TextFlags.Edge,
             FontSize = 14,
+            TextColor = ColorHelper.GetColor(2),
         };
         countNode.AttachNode(this);
 

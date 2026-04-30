@@ -35,9 +35,6 @@ public class GpSliderNode : SimpleComponentNode
             OnValueChanged = value => { Service.GatheringController.ComputeRotations(value); }
         };
         // Reshape slider for aesthetics
-        sliderNode.SliderBackgroundButtonNode.Height = 18;
-        sliderNode.SliderBackgroundButtonNode.Width = 150 - 22;
-        sliderNode.SliderBackgroundButtonNode.Y = 0;
         sliderNode.SliderForegroundButtonNode.Y = 1.5f;
         sliderNode.AttachNode(this);
     }

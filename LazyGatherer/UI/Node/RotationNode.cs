@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Common.Math;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node.Simple;
 using LazyGatherer.Gathering.Actions;
@@ -38,6 +39,7 @@ public sealed class RotationNode : SimpleComponentNode
         {
             Position = new Vector2(4f + (44 * index), 26),
             TextFlags = TextFlags.Edge | TextFlags.AutoAdjustNodeSize,
+            TextColor = ColorHelper.GetColor(2),
             FontSize = 14,
             String = FormatEstimatedYield(outcome.Value),
             IsVisible = Service.Config.DisplayEstimatedYield,
