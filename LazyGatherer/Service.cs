@@ -29,11 +29,27 @@ namespace LazyGatherer
         [PluginService]
         public static IObjectTable ObjectTable { get; private set; } = null!;
 
+        [PluginService]
+        public static IPlayerState PlayerState { get; private set; } = null!;
+
+        [PluginService]
+        public static IClientState ClientState { get; private set; } = null!;
+
+        [PluginService]
+        public static IFramework Framework { get; private set; } = null!;
+
+        [PluginService]
+        public static IChatGui ChatGui { get; private set; } = null!;
+
+        [PluginService]
+        public static IDutyState DutyState { get; private set; } = null!;
+
         // Plugin service
         internal static Config Config { get; set; }
         internal static UIController UIController { get; set; }
         internal static GatheringController GatheringController { get; set; }
         internal static MasterpieceController MasterpieceController { get; set; }
+        internal static GpAlertController GpAlertController { get; set; }
         internal static Hooks Hooks { get; set; }
 
         // Addons

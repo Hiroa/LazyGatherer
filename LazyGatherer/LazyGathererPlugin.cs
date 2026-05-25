@@ -18,6 +18,7 @@ namespace LazyGatherer
 
             Service.GatheringController = new GatheringController();
             Service.MasterpieceController = new MasterpieceController();
+            Service.GpAlertController = new GpAlertController();
             Service.UIController = new UIController();
             Service.Hooks = new Hooks();
 

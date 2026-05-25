@@ -1,4 +1,5 @@
 ﻿using Dalamud.Configuration;
+using Dalamud.Game.Text;
 
 namespace LazyGatherer.Models;
 
@@ -17,4 +18,11 @@ public class Config : IPluginConfiguration
     // Masterpiece Settings
     public bool CollectableDisplay = true;
     public string CollectableLastRotation = "";
+
+    // GP Alert
+    public bool GpAlertEnabled = false;
+    public int GpAlertThreshold = 0;
+    public uint GpAlertSound = 1;
+    public bool GpAlertChatMessage = false;
+    public XivChatType GpAlertChatType = XivChatType.Echo;
 }
