@@ -15,6 +15,7 @@ namespace LazyGatherer
 
             Service.Config = Service.Interface.GetPluginConfig() as Config ?? new Config();
             Service.ConfigAddon = GetConfigAddon();
+            Service.GpAlertAddon = GetGpAlertAddon();
 
             Service.GatheringController = new GatheringController();
             Service.MasterpieceController = new MasterpieceController();
@@ -33,6 +34,7 @@ namespace LazyGatherer
             Service.MasterpieceController.Dispose();
             Service.GatheringController.Dispose();
             Service.ConfigAddon.Dispose();
+            Service.GpAlertAddon.Dispose();
             KamiToolKitLibrary.Dispose();
         }
 
@@ -42,7 +44,13 @@ namespace LazyGatherer
         private static ConfigAddon GetConfigAddon() => new ConfigAddon
         {
             InternalName = "LazyGathererConfig",
-            Title = "LazyGatherer configuration",
+            Title = "LazyGatherer - Configuration",
+        };
+
+        private GpAlertAddon GetGpAlertAddon() => new GpAlertAddon
+        {
+            InternalName = "LazyGathererGpAlertConfig",
+            Title = "LazyGatherer - GP alert configuration",
         };
     }
 }

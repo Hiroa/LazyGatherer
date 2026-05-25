@@ -72,7 +72,7 @@ public class GpAlertController : IDisposable
 
                 // Play sound and print message
                 UIGlobals.PlayChatSoundEffect(Service.Config.GpAlertSound);
-                if (Service.Config.GpAlertChatMessage)
+                if (Service.Config.GpAlertSendChatMessage)
                 {
                     PrintMessage();
                 }

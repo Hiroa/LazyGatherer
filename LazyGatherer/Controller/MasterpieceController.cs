@@ -21,6 +21,7 @@ public unsafe class MasterpieceController : IDisposable
     private readonly Dictionary<Tuple<uint, uint>, AntsNode> antsNodes = [];
     private TextDropDownNode? rotationsDropdownNode;
     private CircleButtonNode? displayButtonNode;
+    private CircleButtonNode? gpAlertButtonNode;
 
     // State Variables
     public bool IsEnabled { get; set; }
@@ -107,6 +108,17 @@ public unsafe class MasterpieceController : IDisposable
             }
         };
         displayButtonNode.AttachNode(masterpieceAddon->RootNode);
+
+        gpAlertButtonNode = new CircleButtonNode
+        {
+            Position = new Vector2(64, 645),
+            Size = new Vector2(28, 28),
+            Icon = ButtonIcon.Volume,
+            TextTooltip = "[LazyGatherer] GP alert config",
+            IsVisible = true,
+            OnClick = () => { Service.GpAlertAddon.Toggle(); }
+        };
+        gpAlertButtonNode.AttachNode(masterpieceAddon->RootNode);
 
         rotationsDropdownNode = new TextDropDownNode
         {
@@ -218,6 +230,13 @@ public unsafe class MasterpieceController : IDisposable
             displayButtonNode.DetachNode();
             displayButtonNode.Dispose();
             displayButtonNode = null;
+        }
+
+        if (gpAlertButtonNode != null)
+        {
+            gpAlertButtonNode.DetachNode();
+            gpAlertButtonNode.Dispose();
+            gpAlertButtonNode = null;
         }
 
         foreach (var keyValuePair in antsNodes)

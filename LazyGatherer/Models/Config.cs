@@ -21,8 +21,8 @@ public class Config : IPluginConfiguration
 
     // GP Alert
     public bool GpAlertEnabled = false;
-    public int GpAlertThreshold = 0;
+    public uint GpAlertThreshold = 0;
     public uint GpAlertSound = 1;
-    public bool GpAlertChatMessage = false;
+    public bool GpAlertSendChatMessage = false;
     public XivChatType GpAlertChatType = XivChatType.Echo;
 }

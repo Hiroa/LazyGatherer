@@ -17,6 +17,7 @@ public class UIController : IDisposable
     private readonly List<RotationNode> rotationNodes = [];
     private CircleButtonNode? configButtonNode;
     private CircleButtonNode? displayButtonNode;
+    private CircleButtonNode? gpAlertButtonNode;
     private GpSliderNode? sliderNode;
 
     public unsafe UIController()
@@ -53,6 +54,7 @@ public class UIController : IDisposable
         {
             if (displayButtonNode is { IsVisible: true }) displayButtonNode.IsVisible = false;
             if (configButtonNode is { IsVisible: true }) configButtonNode.IsVisible = false;
+            if (gpAlertButtonNode is { IsVisible: true }) gpAlertButtonNode.IsVisible = false;
             if (sliderNode is { IsVisible: true }) sliderNode.IsVisible = false;
             rotationNodes.ForEach(r => r.IsVisible = false);
         }
@@ -138,6 +140,17 @@ public class UIController : IDisposable
         };
         displayButtonNode.AttachNode(gatheringAddon->RootNode);
 
+        gpAlertButtonNode = new CircleButtonNode
+        {
+            Position = new Vector2(406.0f, 8.0f),
+            Size = new Vector2(24f, 24f),
+            Icon = ButtonIcon.Volume,
+            TextTooltip = "[LazyGatherer] GP alert config",
+            IsVisible = true,
+            OnClick = () => { Service.GpAlertAddon.Toggle(); }
+        };
+        gpAlertButtonNode.AttachNode(gatheringAddon->RootNode);
+
         var maxGp = Service.ObjectTable.LocalPlayer?.MaxGp ?? 1500;
         sliderNode = new GpSliderNode((int)maxGp)
         {
@@ -163,6 +176,13 @@ public class UIController : IDisposable
             displayButtonNode.DetachNode();
             displayButtonNode.Dispose();
             displayButtonNode = null;
+        }
+
+        if (gpAlertButtonNode != null)
+        {
+            gpAlertButtonNode.DetachNode();
+            gpAlertButtonNode.Dispose();
+            gpAlertButtonNode = null;
         }
 
         if (sliderNode != null)

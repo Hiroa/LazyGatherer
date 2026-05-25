@@ -54,5 +54,6 @@ namespace LazyGatherer
 
         // Addons
         internal static ConfigAddon ConfigAddon { get; set; }
+        internal static GpAlertAddon GpAlertAddon { get; set; }
     }
 }
