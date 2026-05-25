@@ -41,7 +41,7 @@ public sealed class RotationNode : SimpleComponentNode
             TextureCoordinates = new Vector2(72, 84),
             TextureSize = new Vector2(24, 24),
             Offsets = new Vector4(10, 10, 10, 10),
-            IsVisible = true,
+            IsVisible = Service.Config.DisplayBackground,
             Alpha = 0.8f
         };
         backgroundNode.AttachNode(this);
@@ -97,6 +97,7 @@ public sealed class RotationNode : SimpleComponentNode
         var config = Service.Config;
         IsVisible = config.Display;
         estimatedYieldNode?.IsVisible = config.DisplayEstimatedYield;
+        backgroundNode?.IsVisible = config.DisplayBackground;
         Size = ComputeSize();
     }
 

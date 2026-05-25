@@ -32,7 +32,7 @@ public class ConfigAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
-        SetWindowSize(new Vector2(300.0f, 318.0f));
+        SetWindowSize(new Vector2(300.0f, 332.0f));
         var displayTextNode = new TextNode
         {
             IsVisible = true,
@@ -76,11 +76,27 @@ public class ConfigAddon : NativeAddon
         };
         displayGpSliderCb.AttachNode(this);
 
+        var displayBackgroundCb = new CheckboxNode
+        {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(displayNode.X, displayGpSliderCb.Bounds.Bottom),
+            String = "Display background",
+            IsChecked = Service.Config.DisplayBackground,
+            OnClick = isChecked =>
+            {
+                Service.Config.DisplayBackground = isChecked;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.UIController.Update();
+            }
+        };
+        displayBackgroundCb.AttachNode(this);
+
         var displayEstimatedYieldCb = new CheckboxNode
         {
             IsVisible = true,
             Size = ContentSize with { Y = 20 },
-            Position = new Vector2(displayGpSliderCb.X, displayGpSliderCb.Bounds.Bottom),
+            Position = new Vector2(displayBackgroundCb.X, displayBackgroundCb.Bounds.Bottom),
             String = "Display estimated yield",
             IsChecked = Service.Config.DisplayEstimatedYield,
             OnClick = isChecked =>

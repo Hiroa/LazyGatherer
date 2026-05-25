@@ -10,6 +10,7 @@ public class Config : IPluginConfiguration
     // Gathering Settings
     public bool Display = true;
     public bool DisplayGpSlider = true;
+    public bool DisplayBackground = true;
     public bool DisplayEstimatedYield = false;
     public ComparerEnum RotationCalculator = ComparerEnum.MaxYield;
     public EstimatedYieldStyle EstimatedYieldStyle = EstimatedYieldStyle.Basic;
