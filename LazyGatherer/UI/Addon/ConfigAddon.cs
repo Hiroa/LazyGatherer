@@ -4,7 +4,6 @@ using System.Linq;
 using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
-using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node.Simple;
 using LazyGatherer.Models;
@@ -33,25 +32,25 @@ public class ConfigAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
-        SetWindowSize(new Vector2(300.0f, 284.0f));
-        new TextNode
+        SetWindowSize(new Vector2(300.0f, 318.0f));
+        var displayTextNode = new TextNode
         {
-            String = "Display options",
-            TextColor = ColorHelper.GetColor(8),
-            TextFlags = TextFlags.Edge,
             IsVisible = true,
-            Size = new Vector2(200, 20),
+            Size = ContentSize with { Y = 20 },
+            Position = ContentStartPosition with { Y = 45 },
+            String = "Display options",
+            TextFlags = TextFlags.Edge,
             FontSize = 14,
-            Position = new Vector2(10, 45),
-        }.AttachNode(this);
+        };
+        displayTextNode.AttachNode(this);
 
         displayNode = new CheckboxNode
         {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(ContentStartPosition.X + 16, displayTextNode.Bounds.Bottom),
             String = "Display Rotation",
             IsChecked = Service.Config.Display,
-            IsVisible = true,
-            Size = new Vector2(150, 20),
-            Position = new Vector2(28, 65),
             OnClick = isChecked =>
             {
                 Service.Config.Display = isChecked;
@@ -61,52 +60,54 @@ public class ConfigAddon : NativeAddon
         };
         displayNode.AttachNode(this);
 
-        new CheckboxNode
+        var displayGpSliderCb = new CheckboxNode
         {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(displayNode.X, displayNode.Bounds.Bottom),
             String = "Display max GP slider",
             IsChecked = Service.Config.DisplayGpSlider,
-            IsVisible = true,
-            Size = new Vector2(150, 20),
-            Position = new Vector2(28, 85),
             OnClick = isChecked =>
             {
                 Service.Config.DisplayGpSlider = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update();
             }
-        }.AttachNode(this);
+        };
+        displayGpSliderCb.AttachNode(this);
 
-        new CheckboxNode
+        var displayEstimatedYieldCb = new CheckboxNode
         {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(displayGpSliderCb.X, displayGpSliderCb.Bounds.Bottom),
             String = "Display estimated yield",
             IsChecked = Service.Config.DisplayEstimatedYield,
-            IsVisible = true,
-            Size = new Vector2(150, 20),
-            Position = new Vector2(28, 105),
             OnClick = isChecked =>
             {
                 Service.Config.DisplayEstimatedYield = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.UIController.Update();
             }
-        }.AttachNode(this);
+        };
+        displayEstimatedYieldCb.AttachNode(this);
 
-        new TextNode
+        var estimatedYieldTextNode = new TextNode
         {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(displayEstimatedYieldCb.X + 20, displayEstimatedYieldCb.Bounds.Bottom),
             String = "Estimated yield display style:",
-            TextColor = ColorHelper.GetColor(8),
-            TextFlags = TextFlags.Edge,
-            IsVisible = true,
-            Size = new Vector2(200, 20),
             FontSize = 14,
-            Position = new Vector2(48, 125),
-        }.AttachNode(this);
+        };
+        estimatedYieldTextNode.AttachNode(this);
 
-        new TextDropDownNode()
+        var estimatedYieldDropDownNode = new TextDropDownNode
         {
             IsVisible = true,
-            Size = new Vector2(200, 24),
-            Position = new Vector2(48, 145),
+            Size = new Vector2(230, 24),
+            // Position = new Vector2(48, 145),
+            Position = new Vector2(estimatedYieldTextNode.X, estimatedYieldTextNode.Bounds.Bottom),
             Options = estimatedYieldStyleOptions.Values.ToList(),
             SelectedOption = estimatedYieldStyleOptions[Service.Config.EstimatedYieldStyle],
             OnOptionSelected = selectedItem =>
@@ -116,41 +117,50 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
-        }.AttachNode(this);
+        };
+        estimatedYieldDropDownNode.AttachNode(this);
+
+        var separatorNode = new HorizontalLineNode
+        {
+            Position = ContentStartPosition with { Y = estimatedYieldDropDownNode.Bounds.Bottom },
+            Size = new Vector2(ContentSize.X, 4),
+        };
+        separatorNode.AttachNode(this);
 
         // Rotation options
 
-        new TextNode
+        var rotationOptionsTextNode = new TextNode
         {
-            String = "Rotation options",
-            TextColor = ColorHelper.GetColor(8),
-            TextFlags = TextFlags.Edge,
             IsVisible = true,
-            Size = new Vector2(200, 20),
+            Size = ContentSize with { Y = 20 },
+            Position = ContentStartPosition with { Y = separatorNode.Bounds.Bottom + 5 },
+            String = "Rotation options",
+            TextFlags = TextFlags.Edge,
             FontSize = 14,
-            Position = new Vector2(10, 179),
-        }.AttachNode(this);
+        };
+        rotationOptionsTextNode.AttachNode(this);
 
-        new CheckboxNode
+        var onTurnRoationCb = new CheckboxNode
         {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(ContentStartPosition.X + 16, rotationOptionsTextNode.Bounds.Bottom),
             String = "One turn rotation",
             IsChecked = Service.Config.OneTurnRotation,
-            IsVisible = true,
-            Size = new Vector2(150, 20),
-            Position = new Vector2(28, 199),
             OnClick = isChecked =>
             {
                 Service.Config.OneTurnRotation = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             }
-        }.AttachNode(this);
+        };
+        onTurnRoationCb.AttachNode(this);
 
         new SimpleImageNode
         {
-            Size = new Vector2(28, 28),
-            Position = new Vector2(260, 195),
             IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(ContentSize.X - 25, onTurnRoationCb.Y - 5),
             TexturePath = "ui/uld/CircleButtons.tex",
             TextureSize = new Vector2(28.0f, 28.0f),
             TextureCoordinates = new Vector2(112.0f, 84.0f),
@@ -158,22 +168,21 @@ public class ConfigAddon : NativeAddon
                           "This may result in suboptimal rotations, but can be useful for quick gathering.",
         }.AttachNode(this);
 
-        new TextNode
+        var rotationCalculatorTextNode = new TextNode
         {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(ContentStartPosition.X + 16, onTurnRoationCb.Bounds.Bottom),
             String = "Rotation calculator:",
-            TextColor = ColorHelper.GetColor(8),
-            TextFlags = TextFlags.Edge,
-            IsVisible = true,
-            Size = new Vector2(200, 20),
             FontSize = 14,
-            Position = new Vector2(28, 219),
-        }.AttachNode(this);
+        };
+        rotationCalculatorTextNode.AttachNode(this);
 
-        new TextDropDownNode()
+        var rotationCalculatorDropDown = new TextDropDownNode
         {
             IsVisible = true,
-            Size = new Vector2(220, 24),
-            Position = new Vector2(28, 239),
+            Size = new Vector2(250, 24),
+            Position = new Vector2(rotationCalculatorTextNode.X, rotationCalculatorTextNode.Bounds.Bottom),
             Options = calculatorOptions.Values.ToList(),
             SelectedOption = calculatorOptions[Service.Config.RotationCalculator],
             OnOptionSelected = selectedItem =>
@@ -183,7 +192,8 @@ public class ConfigAddon : NativeAddon
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },
-        }.AttachNode(this);
+        };
+        rotationCalculatorDropDown.AttachNode(this);
     }
 
     protected override unsafe void OnUpdate(AtkUnitBase* addon)
