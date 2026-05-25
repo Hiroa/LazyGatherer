@@ -194,6 +194,23 @@ public class ConfigAddon : NativeAddon
             },
         };
         rotationCalculatorDropDown.AttachNode(this);
+
+        separatorNode = new HorizontalLineNode
+        {
+            Position = ContentStartPosition with { Y = rotationCalculatorDropDown.Bounds.Bottom + 5 },
+            Size = ContentSize with { Y = 4 },
+        };
+        separatorNode.AttachNode(this);
+
+        var gpAlertButton = new TextButtonNode
+        {
+            IsVisible = true,
+            Size = ContentSize with { Y = 24 },
+            Position = ContentStartPosition with { Y = separatorNode.Bounds.Bottom + 5 },
+            String = "GP Alert configuration",
+            OnClick = () => Service.GpAlertAddon.Toggle()
+        };
+        gpAlertButton.AttachNode(this);
     }
 
     protected override unsafe void OnUpdate(AtkUnitBase* addon)
