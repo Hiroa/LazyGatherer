@@ -33,6 +33,7 @@ namespace LazyGatherer
             Service.UIController.Dispose();
             Service.MasterpieceController.Dispose();
             Service.GatheringController.Dispose();
+            Service.GpAlertController.Dispose();
             Service.ConfigAddon.Dispose();
             Service.GpAlertAddon.Dispose();
             KamiToolKitLibrary.Dispose();

@@ -22,8 +22,8 @@ public class GpAlertController : IDisposable
 
     public void Dispose()
     {
-        Service.Framework.Update -= OnFrameworkUpdate;
         Service.ClientState.ClassJobChanged -= ClientState_ClassJobChanged;
+        Service.Framework.Update -= OnFrameworkUpdate;
     }
 
     // 
