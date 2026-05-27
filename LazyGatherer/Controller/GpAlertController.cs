@@ -3,7 +3,9 @@ using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using LazyGatherer.Models;
+using AgentId = Dalamud.Game.Agent.AgentId;
 
 namespace LazyGatherer.Controller;
 
@@ -71,7 +73,7 @@ public class GpAlertController : IDisposable
                 }
 
                 // Play sound and print message
-                UIGlobals.PlayChatSoundEffect(Service.Config.GpAlertSound);
+                PlayAlertSound();
                 if (Service.Config.GpAlertSendChatMessage)
                 {
                     PrintMessage();
@@ -99,8 +101,29 @@ public class GpAlertController : IDisposable
         var sb = new SeStringBuilder()
                  .AddUiForeground("[LazyGatherer] ", 45)
                  .AddUiForeground("[GP Alert] ", 57)
-                 .Append("GP has reached the configured threshold!");
+                 .Append($"GP has reached {Service.Config.GpAlertThreshold}.");
 
         Service.ChatGui.Print(new XivChatEntry { Type = Service.Config.GpAlertChatType, Message = sb.BuiltString });
+    }
+
+    public static unsafe void PlayAlertSound()
+    {
+        if (Service.Config.GpAlertSoundIsAlarm)
+        {
+            var agentInterfacePtr = Service.GameGui.GetAgentById((int)AgentId.Alarm);
+            if (agentInterfacePtr != IntPtr.Zero)
+            {
+                ((AgentAlarm*)agentInterfacePtr.Address)->PlayAlarmSoundEffect(Service.Config.GpAlertAlarmSoundEffect);
+            }
+            else
+            {
+                Service.Log.Warning("Could not find AgentAlarm, playing default sound effect.");
+                UIGlobals.PlayChatSoundEffect(1);
+            }
+        }
+        else
+        {
+            UIGlobals.PlayChatSoundEffect(Service.Config.GpAlertSoundEffectId);
+        }
     }
 }

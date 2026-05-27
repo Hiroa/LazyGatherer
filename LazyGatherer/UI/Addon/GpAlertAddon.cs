@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Dalamud.Game.Text;
-using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit;
 using KamiToolKit.Nodes;
 using KamiToolKit.Premade.Node.Simple;
+using LazyGatherer.Controller;
+using LazyGatherer.Models;
 
 namespace LazyGatherer.UI.Addon;
 
@@ -23,24 +25,33 @@ public class GpAlertAddon : NativeAddon
         { XivChatType.Shout, "Shout" },
     };
 
-    private readonly Dictionary<uint, string> soundOptions = new()
+    private readonly Dictionary<AlertSoundConfig, string> soundOptions = new()
     {
-        { 1, "Sound 1" },
-        { 2, "Sound 2" },
-        { 3, "Sound 3" },
-        { 4, "Sound 4" },
-        { 5, "Sound 5" },
-        { 6, "Sound 6" },
-        { 7, "Sound 7" },
-        { 8, "Sound 8" },
-        { 9, "Sound 9" },
-        { 10, "Sound 10" },
-        { 11, "Sound 11" },
-        { 12, "Sound 12" },
-        { 13, "Sound 13" },
-        { 14, "Sound 14" },
-        { 15, "Sound 15" },
-        { 16, "Sound 16" },
+        // Alarm sound
+        { new AlertSoundConfig(AlarmSoundEffect.Bell), "Alarm - Bell" },
+        { new AlertSoundConfig(AlarmSoundEffect.MusicBox), "Alarm - MusicBox" },
+        { new AlertSoundConfig(AlarmSoundEffect.Prelude), "Alarm - Prelude" },
+        { new AlertSoundConfig(AlarmSoundEffect.Chocobo), "Alarm - Chocobo" },
+        { new AlertSoundConfig(AlarmSoundEffect.LaNoscea), "Alarm - LaNoscea" },
+        { new AlertSoundConfig(AlarmSoundEffect.Festival), "Alarm - Festival" },
+
+        // Sound effect
+        { new AlertSoundConfig(1), "Sound effect 1" },
+        { new AlertSoundConfig(2), "Sound effect 2" },
+        { new AlertSoundConfig(3), "Sound effect 3" },
+        { new AlertSoundConfig(4), "Sound effect 4" },
+        { new AlertSoundConfig(5), "Sound effect 5" },
+        { new AlertSoundConfig(6), "Sound effect 6" },
+        { new AlertSoundConfig(7), "Sound effect 7" },
+        { new AlertSoundConfig(8), "Sound effect 8" },
+        { new AlertSoundConfig(9), "Sound effect 9" },
+        { new AlertSoundConfig(10), "Sound effect 10" },
+        { new AlertSoundConfig(11), "Sound effect 11" },
+        { new AlertSoundConfig(12), "Sound effect 12" },
+        { new AlertSoundConfig(13), "Sound effect 13" },
+        { new AlertSoundConfig(14), "Sound effect 14" },
+        { new AlertSoundConfig(15), "Sound effect 15" },
+        { new AlertSoundConfig(16), "Sound effect 16" },
     };
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
@@ -120,12 +131,14 @@ public class GpAlertAddon : NativeAddon
             Size = new Vector2(ContentSize.X - 20.0f, 24f),
             Position = new Vector2(ContentStartPosition.X + 20, gpAlertSoundTn.Bounds.Bottom),
             Options = soundOptions.Values.ToList(),
-            SelectedOption = soundOptions[Service.Config.GpAlertSound],
+            SelectedOption = soundOptions[AlertSoundConfig.FromConfig()],
             OnOptionSelected = selectedItem =>
             {
-                Service.Config.GpAlertSound = soundOptions
-                                              .First(kvp => kvp.Value == selectedItem).Key;
-                UIGlobals.PlayChatSoundEffect(Service.Config.GpAlertSound);
+                var alertSound = soundOptions.First(kvp => kvp.Value == selectedItem).Key;
+                Service.Config.GpAlertSoundIsAlarm = alertSound.IsAnAlarm;
+                Service.Config.GpAlertSoundEffectId = alertSound.SoundEffectId;
+                Service.Config.GpAlertAlarmSoundEffect = alertSound.AlarmSoundEffect;
+                GpAlertController.PlayAlertSound();
                 Service.Interface.SavePluginConfig(Service.Config);
                 Service.GatheringController.ComputeRotations();
             },

@@ -1,5 +1,6 @@
 ﻿using Dalamud.Configuration;
 using Dalamud.Game.Text;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 
 namespace LazyGatherer.Models;
 
@@ -23,7 +24,9 @@ public class Config : IPluginConfiguration
     // GP Alert
     public bool GpAlertEnabled = false;
     public uint GpAlertThreshold = 0;
-    public uint GpAlertSound = 1;
+    public bool GpAlertSoundIsAlarm = false;
+    public uint GpAlertSoundEffectId = 1;
+    public AlarmSoundEffect GpAlertAlarmSoundEffect = AlarmSoundEffect.Bell;
     public bool GpAlertSendChatMessage = false;
     public XivChatType GpAlertChatType = XivChatType.Echo;
 }
