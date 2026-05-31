@@ -1,4 +1,5 @@
 ﻿using System;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
@@ -12,10 +13,13 @@ namespace LazyGatherer.Controller;
 public class GpAlertController : IDisposable
 {
     private bool triggered = true;
+    private int nextCheck;
 
     public GpAlertController()
     {
         Service.ClientState.ClassJobChanged += ClientState_ClassJobChanged;
+        Service.ClientState.Logout += ClientState_OnLogout;
+        Service.ClientState.Login += ClientState_OnLogin;
         if (Service.PlayerState.ClassJob.RowId is (uint)Job.Bot or (uint)Job.Min)
         {
             Service.Framework.Update += OnFrameworkUpdate;
@@ -25,10 +29,25 @@ public class GpAlertController : IDisposable
     public void Dispose()
     {
         Service.ClientState.ClassJobChanged -= ClientState_ClassJobChanged;
+        Service.ClientState.Logout -= ClientState_OnLogout;
         Service.Framework.Update -= OnFrameworkUpdate;
     }
 
-    // 
+    private void ClientState_OnLogout(int type, int code)
+    {
+        Service.Framework.Update -= OnFrameworkUpdate;
+        Service.ClientState.ClassJobChanged -= ClientState_ClassJobChanged;
+        triggered = true;
+    }
+
+    private void ClientState_OnLogin()
+    {
+        if (Service.PlayerState.ClassJob.RowId is (uint)Job.Bot or (uint)Job.Min)
+        {
+            Service.Framework.Update += OnFrameworkUpdate;
+        }
+    }
+
     private void ClientState_ClassJobChanged(uint classJobId)
     {
         if (classJobId is (uint)Job.Bot or (uint)Job.Min)
@@ -46,26 +65,26 @@ public class GpAlertController : IDisposable
 
     private void OnFrameworkUpdate(IFramework framework)
     {
+        // To reduce load, check every 3 seconds
+        if (Environment.TickCount < nextCheck) return;
+        nextCheck = Environment.TickCount + 3000;
+
+        // Check if enable
         var config = Service.Config;
-        if (!Service.Config.GpAlertEnabled)
-        {
-            return;
-        }
+        if (!config.GpAlertEnabled) return;
 
         // If 0, player is probably teleporting or has changed job and GP is not available, ignored
         var playerGp = Service.ObjectTable.LocalPlayer?.CurrentGp ?? 0;
-        if (playerGp == 0)
-        {
-            return;
-        }
+        if (playerGp == 0) return;
 
         switch (triggered)
         {
             case false when playerGp >= config.GpAlertThreshold:
                 Service.Log.Verbose($"GP Alert triggered: Current GP = {playerGp}, " +
                                     $"Threshold = {config.GpAlertThreshold}, Triggered = {triggered}, InDuty = {Service.DutyState.IsDutyStarted}");
-                // Do not trigger on duty
-                if (Service.DutyState.IsDutyStarted)
+                // Do not trigger on duty or gathering (Revisit)
+                if (Service.DutyState.IsDutyStarted ||
+                    Service.Condition.Any(ConditionFlag.Gathering))
                 {
                     Service.Framework.Update -= OnFrameworkUpdate;
                     triggered = true;

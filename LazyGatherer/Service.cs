@@ -44,6 +44,9 @@ namespace LazyGatherer
         [PluginService]
         public static IDutyState DutyState { get; private set; } = null!;
 
+        [PluginService]
+        public static ICondition Condition { get; private set; } = null!;
+
         // Plugin service
         internal static Config Config { get; set; }
         internal static UIController UIController { get; set; }
