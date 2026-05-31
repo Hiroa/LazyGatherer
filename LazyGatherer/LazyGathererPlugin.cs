@@ -1,4 +1,5 @@
-﻿using Dalamud.Plugin;
+﻿using Dalamud.Game.Command;
+using Dalamud.Plugin;
 using KamiToolKit;
 using LazyGatherer.Controller;
 using LazyGatherer.Models;
@@ -24,10 +25,21 @@ namespace LazyGatherer
             Service.Hooks = new Hooks();
 
             Service.Interface.UiBuilder.OpenConfigUi += OpenConfig;
+
+            Service.CommandManager.AddHandler("/lazygatherer", new CommandInfo(OnCommand)
+            {
+                HelpMessage = "Open the configuration"
+            });
+            Service.CommandManager.AddHandler("/lg", new CommandInfo(OnCommand)
+            {
+                HelpMessage = "Open the configuration"
+            });
         }
 
         public void Dispose()
         {
+            Service.CommandManager.RemoveHandler("/lg");
+            Service.CommandManager.RemoveHandler("/lazygatherer");
             Service.Interface.UiBuilder.OpenConfigUi -= OpenConfig;
             Service.Hooks.Dispose();
             Service.UIController.Dispose();
@@ -37,6 +49,11 @@ namespace LazyGatherer
             Service.ConfigAddon.Dispose();
             Service.GpAlertAddon.Dispose();
             KamiToolKitLibrary.Dispose();
+        }
+
+        private void OnCommand(string command, string arguments)
+        {
+            OpenConfig();
         }
 
         private static void OpenConfig()
