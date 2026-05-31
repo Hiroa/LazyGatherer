@@ -1,8 +1,10 @@
 ﻿using System;
 using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.Command;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using LazyGatherer.Models;
@@ -24,6 +26,13 @@ public class GpAlertController : IDisposable
         {
             Service.Framework.Update += OnFrameworkUpdate;
         }
+
+        Service.CommandManager.AddHandler("/gpalert", new CommandInfo(OnCommand)
+        {
+            HelpMessage = "Displays GP alert configuration.\n" +
+                          "/gpalert <On/Off> -> enable or disable the alert.\n" +
+                          "/gpalert <1-9999> -> set the GP threshold."
+        });
     }
 
     public void Dispose()
@@ -143,6 +152,38 @@ public class GpAlertController : IDisposable
         else
         {
             UIGlobals.PlayChatSoundEffect(Service.Config.GpAlertSoundEffectId);
+        }
+    }
+
+    private void OnCommand(string command, string arguments)
+    {
+        if (arguments.IsNullOrEmpty())
+        {
+            Service.GpAlertAddon.Toggle();
+        }
+
+        var split = arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        switch (split[0].ToLower())
+        {
+            case "on":
+                Service.Config.GpAlertEnabled = true;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.GpAlertAddon.Update();
+                break;
+            case "off":
+                Service.Config.GpAlertEnabled = false;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.GpAlertAddon.Update();
+                break;
+            default:
+                if (uint.TryParse(split[0], out var threshold))
+                {
+                    Service.Config.GpAlertThreshold = Math.Clamp(threshold, 1, 9999);
+                    Service.Interface.SavePluginConfig(Service.Config);
+                    Service.GpAlertAddon.Update();
+                }
+
+                break;
         }
     }
 }

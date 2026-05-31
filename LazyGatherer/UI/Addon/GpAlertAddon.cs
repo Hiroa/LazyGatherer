@@ -54,11 +54,14 @@ public class GpAlertAddon : NativeAddon
         { new AlertSoundConfig(16), "Sound effect 16" },
     };
 
+    private CheckboxNode? gpAlertEnableCb;
+    private NumericInputNode? gpAlertThresholdNin;
+
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
         SetWindowSize(new Vector2(300.0f, 250.0f));
         // Enable CB
-        var gpAlertEnableCb = new CheckboxNode
+        gpAlertEnableCb = new CheckboxNode
         {
             IsVisible = true,
             Size = ContentSize with { Y = 20 },
@@ -97,7 +100,7 @@ public class GpAlertAddon : NativeAddon
         gpAlertThresholdTn.AttachNode(this);
 
         // Threshold NumericInputNode
-        var gpAlertThresholdNin = new NumericInputNode
+        gpAlertThresholdNin = new NumericInputNode
         {
             IsVisible = true,
             Size = new Vector2(ContentSize.X - 20.0f, 20f),
@@ -189,5 +192,11 @@ public class GpAlertAddon : NativeAddon
             },
         };
         gpAlertChatTypeDd.AttachNode(this);
+    }
+
+    public void Update()
+    {
+        gpAlertEnableCb?.IsChecked = Service.Config.GpAlertEnabled;
+        gpAlertThresholdNin?.Value = (int)Service.Config.GpAlertThreshold;
     }
 }
