@@ -23,6 +23,7 @@ public class Config : IPluginConfiguration
 
     // GP Alert
     public bool GpAlertEnabled = false;
+    public bool GpAlertOnlyGatherer = false;
     public uint GpAlertThreshold = 0;
     public bool GpAlertSoundIsAlarm = false;
     public uint GpAlertSoundEffectId = 1;

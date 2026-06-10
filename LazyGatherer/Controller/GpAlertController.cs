@@ -65,10 +65,11 @@ public class GpAlertController : IDisposable
             Service.Framework.Update -= OnFrameworkUpdate;
             Service.Framework.Update += OnFrameworkUpdate;
         }
-        // Only disable if GP are not regenerating or alert is disabled
-        else if (!Service.Config.GpAlertEnabled || triggered)
+        // Only disable if GP are not regenerating or alert is disabled or option to not trigger on non gatherer is on
+        else if (!Service.Config.GpAlertEnabled || triggered || Service.Config.GpAlertOnlyGatherer)
         {
             Service.Framework.Update -= OnFrameworkUpdate;
+            triggered = true;
         }
     }
 

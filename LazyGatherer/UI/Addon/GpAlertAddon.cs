@@ -59,7 +59,7 @@ public class GpAlertAddon : NativeAddon
 
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
-        SetWindowSize(new Vector2(300.0f, 250.0f));
+        SetWindowSize(new Vector2(300.0f, 280.0f));
         // Enable CB
         gpAlertEnableCb = new CheckboxNode
         {
@@ -192,6 +192,22 @@ public class GpAlertAddon : NativeAddon
             },
         };
         gpAlertChatTypeDd.AttachNode(this);
+
+        // Do not trigger on non gatherer CB
+        var onlyGathererCb = new CheckboxNode
+        {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = ContentStartPosition with { Y = gpAlertChatTypeDd.Bounds.Bottom + 10 },
+            String = "Only trigger on gatherer",
+            IsChecked = Service.Config.GpAlertOnlyGatherer,
+            OnClick = isChecked =>
+            {
+                Service.Config.GpAlertOnlyGatherer = isChecked;
+                Service.Interface.SavePluginConfig(Service.Config);
+            }
+        };
+        onlyGathererCb.AttachNode(this);
     }
 
     public void Update()
