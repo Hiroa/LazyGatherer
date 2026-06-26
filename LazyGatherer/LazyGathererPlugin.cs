@@ -18,10 +18,10 @@ namespace LazyGatherer
             Service.ConfigAddon = GetConfigAddon();
             Service.GpAlertAddon = GetGpAlertAddon();
 
+            Service.UIController = new UIController();
             Service.GatheringController = new GatheringController();
             Service.MasterpieceController = new MasterpieceController();
             Service.GpAlertController = new GpAlertController();
-            Service.UIController = new UIController();
             Service.Hooks = new Hooks();
 
             Service.Interface.UiBuilder.OpenConfigUi += OpenConfig;
@@ -42,9 +42,9 @@ namespace LazyGatherer
             Service.CommandManager.RemoveHandler("/lazygatherer");
             Service.Interface.UiBuilder.OpenConfigUi -= OpenConfig;
             Service.Hooks.Dispose();
-            Service.UIController.Dispose();
             Service.MasterpieceController.Dispose();
             Service.GatheringController.Dispose();
+            Service.UIController.Dispose();
             Service.GpAlertController.Dispose();
             Service.ConfigAddon.Dispose();
             Service.GpAlertAddon.Dispose();

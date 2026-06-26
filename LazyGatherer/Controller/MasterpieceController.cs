@@ -38,12 +38,12 @@ public unsafe class MasterpieceController : IDisposable
             OnFinalize = OnGatheringAddonClose,
             OnUpdate = OnGatheringAddonUpdate,
         };
-        addonController.Enable();
+        Service.Framework.Run(() => addonController.Enable()).GetAwaiter().GetResult();
     }
 
     public void Dispose()
     {
-        addonController.Dispose();
+        Service.Framework.Run(() => addonController.Dispose()).GetAwaiter().GetResult();
         IsEnabled = false;
     }
 
@@ -221,28 +221,25 @@ public unsafe class MasterpieceController : IDisposable
         // selectedPreset = null;
         if (rotationsDropdownNode != null)
         {
-            rotationsDropdownNode.DetachNode();
             rotationsDropdownNode.Dispose();
             rotationsDropdownNode = null;
         }
 
         if (displayButtonNode != null)
         {
-            displayButtonNode.DetachNode();
             displayButtonNode.Dispose();
             displayButtonNode = null;
         }
 
         if (gpAlertButtonNode != null)
         {
-            gpAlertButtonNode.DetachNode();
             gpAlertButtonNode.Dispose();
             gpAlertButtonNode = null;
         }
 
         foreach (var keyValuePair in antsNodes)
         {
-            keyValuePair.Value.DetachNode();
+            keyValuePair.Value.Dispose();
             antsNodes.Remove(keyValuePair.Key);
         }
     }

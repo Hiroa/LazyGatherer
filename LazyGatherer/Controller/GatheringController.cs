@@ -32,7 +32,7 @@ public class GatheringController : IDisposable
             OnFinalize = OnGatheringAddonClose,
             OnUpdate = OnGatheringAddonUpdate
         };
-        addonController.Enable();
+        Service.Framework.Run(() => addonController.Enable()).GetAwaiter().GetResult();
     }
 
     public unsafe void OnGatheringAddonUpdate(AtkUnitBase* addon)
@@ -72,7 +72,7 @@ public class GatheringController : IDisposable
 
     public void Dispose()
     {
-        addonController?.Dispose();
+        Service.Framework.Run(() => addonController?.Dispose()).GetAwaiter().GetResult();
     }
 
     private static unsafe List<GatheringContext> GetGatheringContexts(AddonGathering* addon, int maxGpToUse)

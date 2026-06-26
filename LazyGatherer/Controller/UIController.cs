@@ -30,17 +30,13 @@ public class UIController : IDisposable
             OnFinalize = OnGatheringPreFinalize,
             OnUpdate = OnGatheringPostUpdate
         };
-        addonController.Enable();
+        Service.Framework.Run(() => addonController.Enable()).GetAwaiter().GetResult();
     }
 
     public void Dispose()
     {
-        addonController.Dispose();
+        Service.Framework.Run(() => addonController.Dispose()).GetAwaiter().GetResult();
     }
-
-    private unsafe void OnGatheringPostSetup(AtkUnitBase* addon) => InitUI(addon);
-
-    private unsafe void OnGatheringPreFinalize(AtkUnitBase* addon) => ClearUI(addon);
 
     public unsafe void OnGatheringPostUpdate(AtkUnitBase* addon)
     {
@@ -80,7 +76,7 @@ public class UIController : IDisposable
         }
 
         // Clear existing rotations first
-        ClearRotations(gatheringAddon);
+        ClearRotations();
 
         var biggestNodeSize = Vector2.Zero;
         foreach (var go in gatheringOutcomes)
@@ -97,18 +93,13 @@ public class UIController : IDisposable
         rotationNodes.ForEach(r => r.Size = biggestNodeSize);
     }
 
-    private unsafe void ClearRotations(AtkUnitBase* gatheringAddon)
+    private void ClearRotations()
     {
-        if (gatheringAddon != null)
-        {
-            rotationNodes.ForEach(r => r.DetachNode());
-        }
-
         rotationNodes.ForEach(r => r.Dispose());
         rotationNodes.Clear();
     }
 
-    private unsafe void InitUI(AtkUnitBase* gatheringAddon)
+    private unsafe void OnGatheringPostSetup(AtkUnitBase* gatheringAddon)
     {
         if (gatheringAddon == null)
             return;
@@ -163,36 +154,32 @@ public class UIController : IDisposable
     }
 
 
-    private unsafe void ClearUI(AtkUnitBase* addon)
+    private unsafe void OnGatheringPreFinalize(AtkUnitBase* _)
     {
         if (configButtonNode != null)
         {
-            configButtonNode.DetachNode();
             configButtonNode.Dispose();
             configButtonNode = null;
         }
 
         if (displayButtonNode != null)
         {
-            displayButtonNode.DetachNode();
             displayButtonNode.Dispose();
             displayButtonNode = null;
         }
 
         if (gpAlertButtonNode != null)
         {
-            gpAlertButtonNode.DetachNode();
             gpAlertButtonNode.Dispose();
             gpAlertButtonNode = null;
         }
 
         if (sliderNode != null)
         {
-            sliderNode.DetachNode();
             sliderNode.Dispose();
             sliderNode = null;
         }
 
-        ClearRotations(addon);
+        ClearRotations();
     }
 }
