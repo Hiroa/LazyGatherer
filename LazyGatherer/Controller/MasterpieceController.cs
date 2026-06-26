@@ -5,6 +5,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Controllers;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using KamiToolKit.Timelines;
 using LazyGatherer.Collectable;
@@ -97,7 +98,7 @@ public unsafe class MasterpieceController : IDisposable
         {
             Position = new Vector2(38, 645),
             Size = new Vector2(28, 28),
-            Icon = ButtonIcon.Eye,
+            Icon = CircleButtonIcon.Eye,
             TextTooltip = "[LazyGatherer] Toggle display",
             IsVisible = true,
             OnClick = () =>
@@ -113,7 +114,7 @@ public unsafe class MasterpieceController : IDisposable
         {
             Position = new Vector2(64, 645),
             Size = new Vector2(28, 28),
-            Icon = ButtonIcon.Volume,
+            Icon = CircleButtonIcon.Volume,
             TextTooltip = "[LazyGatherer] GP alert config",
             IsVisible = true,
             OnClick = () => { Service.GpAlertAddon.Toggle(); }

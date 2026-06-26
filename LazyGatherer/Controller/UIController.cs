@@ -5,6 +5,7 @@ using System.Numerics;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Controllers;
+using KamiToolKit.Enums;
 using KamiToolKit.Nodes;
 using LazyGatherer.Gathering.Models;
 using LazyGatherer.UI.Node;
@@ -116,7 +117,7 @@ public class UIController : IDisposable
         {
             Position = new Vector2(450.0f, 8.0f),
             Size = new Vector2(24f, 24f),
-            Icon = ButtonIcon.GearCog,
+            Icon = CircleButtonIcon.GearCog,
             TextTooltip = "[LazyGatherer] Configuration",
             IsVisible = true,
             OnClick = () => Service.ConfigAddon.Toggle(),
@@ -128,7 +129,7 @@ public class UIController : IDisposable
         {
             Position = new Vector2(428.0f, 8.0f),
             Size = new Vector2(24f, 24f),
-            Icon = ButtonIcon.Eye,
+            Icon = CircleButtonIcon.Eye,
             TextTooltip = "[LazyGatherer] Toggle display",
             IsVisible = true,
             OnClick = () =>
@@ -144,7 +145,7 @@ public class UIController : IDisposable
         {
             Position = new Vector2(406.0f, 8.0f),
             Size = new Vector2(24f, 24f),
-            Icon = ButtonIcon.Volume,
+            Icon = CircleButtonIcon.Volume,
             TextTooltip = "[LazyGatherer] GP alert config",
             IsVisible = true,
             OnClick = () => { Service.GpAlertAddon.Toggle(); }
