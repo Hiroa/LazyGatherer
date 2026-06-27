@@ -46,8 +46,15 @@ namespace LazyGatherer
             Service.GatheringController.Dispose();
             Service.UIController.Dispose();
             Service.GpAlertController.Dispose();
-            Service.ConfigAddon.Dispose();
-            Service.GpAlertAddon.Dispose();
+            if (!Service.Framework.IsFrameworkUnloading)
+            {
+                Service.Framework.Run(() =>
+                {
+                    Service.ConfigAddon.Dispose();
+                    Service.GpAlertAddon.Dispose();
+                }).GetAwaiter().GetResult();
+            }
+
             KamiToolKitLibrary.Dispose();
         }
 

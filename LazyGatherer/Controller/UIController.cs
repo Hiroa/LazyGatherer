@@ -35,6 +35,7 @@ public class UIController : IDisposable
 
     public void Dispose()
     {
+        if (Service.Framework.IsFrameworkUnloading) return;
         Service.Framework.Run(() => addonController.Dispose()).GetAwaiter().GetResult();
     }
 

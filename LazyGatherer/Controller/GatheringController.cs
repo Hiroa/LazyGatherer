@@ -72,6 +72,7 @@ public class GatheringController : IDisposable
 
     public void Dispose()
     {
+        if (Service.Framework.IsFrameworkUnloading) return;
         Service.Framework.Run(() => addonController?.Dispose()).GetAwaiter().GetResult();
     }
 
