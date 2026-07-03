@@ -118,7 +118,7 @@ public class ConfigAddon : NativeAddon
         };
         estimatedYieldTextNode.AttachNode(this);
 
-        var estimatedYieldDropDownNode = new TextDropDownNode
+        var estimatedYieldDropDownNode = new StringDropDownNode
         {
             IsVisible = true,
             Size = new Vector2(230, 24),
@@ -194,7 +194,7 @@ public class ConfigAddon : NativeAddon
         };
         rotationCalculatorTextNode.AttachNode(this);
 
-        var rotationCalculatorDropDown = new TextDropDownNode
+        var rotationCalculatorDropDown = new StringDropDownNode
         {
             IsVisible = true,
             Size = new Vector2(250, 24),

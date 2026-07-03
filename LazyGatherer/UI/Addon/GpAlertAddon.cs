@@ -128,7 +128,7 @@ public class GpAlertAddon : NativeAddon
         gpAlertSoundTn.AttachNode(this);
 
         // Sound Dropdown
-        var gpAlertSoundDd = new TextDropDownNode
+        var gpAlertSoundDd = new StringDropDownNode
         {
             IsVisible = true,
             Size = new Vector2(ContentSize.X - 20.0f, 24f),
@@ -176,7 +176,7 @@ public class GpAlertAddon : NativeAddon
         gpAlertChatTypeTn.AttachNode(this);
 
         // Chat Type Dropdown
-        var gpAlertChatTypeDd = new TextDropDownNode
+        var gpAlertChatTypeDd = new StringDropDownNode
         {
             IsVisible = true,
             Size = new Vector2(ContentSize.X - 20.0f, 24f),

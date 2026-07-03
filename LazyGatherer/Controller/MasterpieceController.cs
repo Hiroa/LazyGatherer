@@ -20,7 +20,7 @@ public unsafe class MasterpieceController : IDisposable
 
     // UI Nodes
     private readonly Dictionary<Tuple<uint, uint>, AntsNode> antsNodes = [];
-    private TextDropDownNode? rotationsDropdownNode;
+    private StringDropDownNode? rotationsDropdownNode;
     private CircleButtonNode? displayButtonNode;
     private CircleButtonNode? gpAlertButtonNode;
 
@@ -122,7 +122,7 @@ public unsafe class MasterpieceController : IDisposable
         };
         gpAlertButtonNode.AttachNode(masterpieceAddon->RootNode);
 
-        rotationsDropdownNode = new TextDropDownNode
+        rotationsDropdownNode = new StringDropDownNode
         {
             Size = new Vector2(180.0f, 24.0f),
             Position = new Vector2(10.0f, 248.0f),
