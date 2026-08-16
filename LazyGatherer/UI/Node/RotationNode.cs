@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Text;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
@@ -103,21 +104,39 @@ public sealed class RotationNode : SimpleComponentNode
 
     private static string FormatEstimatedYield(GatheringOutcome outcome)
     {
+        var config = Service.Config;
+        var sb = new StringBuilder();
         var roundedYield = Math.Round(outcome.Yield, 1);
         var roundedMinYield = Math.Round(outcome.MinYield, 1);
         var roundedMaxYield = Math.Round(outcome.MaxYield, 1);
-        return Service.Config.EstimatedYieldStyle switch
+        if (config.DisplayShortEstimatedYield)
         {
-            EstimatedYieldStyle.Short => $"{roundedYield}",
-            EstimatedYieldStyle.ShortWithMinMax => $"{roundedYield} ({roundedMinYield}/{roundedMaxYield})",
-            EstimatedYieldStyle.Basic => $"Estimated yield: {roundedYield}",
-            EstimatedYieldStyle.BasicWithMinMax =>
-                $"Estimated yield: {roundedYield} ({roundedMinYield}/{roundedMaxYield})",
-            EstimatedYieldStyle.Detailed => $"Estimated yield: {roundedYield} for {outcome.UsedGp} GP",
-            EstimatedYieldStyle.DetailedWithMinMax =>
-                $"Estimated yield: {roundedYield} ({roundedMinYield}/{roundedMaxYield}) for {outcome.UsedGp} GP",
-            _ => $"Estimated yield: {roundedYield}"
-        };
+            sb.Append(' ');
+            sb.Append(roundedYield);
+        }
+        else
+        {
+            sb.Append("Estimated Yield: ");
+            sb.Append(roundedYield);
+        }
+
+        if (config.DisplayRotationMinMax)
+        {
+            sb.Append(" (");
+            sb.Append(roundedMinYield);
+            sb.Append('/');
+            sb.Append(roundedMaxYield);
+            sb.Append(')');
+        }
+
+        if (config.DisplayRotationGp)
+        {
+            sb.Append(" | ");
+            sb.Append(outcome.UsedGp);
+            sb.Append(" GP");
+        }
+
+        return sb.ToString();
     }
 
     private static uint GetGathererAction(BaseAction action, GatheringContext context) => context.Job switch

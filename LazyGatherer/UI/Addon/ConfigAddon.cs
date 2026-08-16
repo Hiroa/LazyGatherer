@@ -20,19 +20,9 @@ public class ConfigAddon : NativeAddon
         { ComparerEnum.MaxYieldPerGp, "Max Yield per GP" }
     };
 
-    private readonly Dictionary<EstimatedYieldStyle, string> estimatedYieldStyleOptions = new()
-    {
-        { EstimatedYieldStyle.Short, "Short" },
-        { EstimatedYieldStyle.ShortWithMinMax, "Short with min/max" },
-        { EstimatedYieldStyle.Basic, "Basic" },
-        { EstimatedYieldStyle.BasicWithMinMax, "Basic with min/max" },
-        { EstimatedYieldStyle.Detailed, "Detailed" },
-        { EstimatedYieldStyle.DetailedWithMinMax, "Detailed with min/max" }
-    };
-
     protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> atkValueSpan)
     {
-        SetWindowSize(new Vector2(300.0f, 332.0f));
+        SetWindowSize(new Vector2(300.0f, 352.0f));
         var displayTextNode = new TextNode
         {
             IsVisible = true,
@@ -108,37 +98,60 @@ public class ConfigAddon : NativeAddon
         };
         displayEstimatedYieldCb.AttachNode(this);
 
-        var estimatedYieldTextNode = new TextNode
+        var shortEstimatedYieldCb = new CheckboxNode
         {
             IsVisible = true,
             Size = ContentSize with { Y = 20 },
             Position = new Vector2(displayEstimatedYieldCb.X + 20, displayEstimatedYieldCb.Bounds.Bottom),
-            String = "Estimated yield display style:",
-            FontSize = 14,
+            String = "Short style",
+            IsChecked = Service.Config.DisplayShortEstimatedYield,
+            OnClick = isChecked =>
+            {
+                Service.Config.DisplayShortEstimatedYield = isChecked;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.UIController.Update();
+                Service.GatheringController.ComputeRotations();
+            }
         };
-        estimatedYieldTextNode.AttachNode(this);
+        shortEstimatedYieldCb.AttachNode(this);
 
-        var estimatedYieldDropDownNode = new StringDropDownNode
+        var displayRotationMinMaxCb = new CheckboxNode
         {
             IsVisible = true,
-            Size = new Vector2(230, 24),
-            // Position = new Vector2(48, 145),
-            Position = new Vector2(estimatedYieldTextNode.X, estimatedYieldTextNode.Bounds.Bottom),
-            Options = estimatedYieldStyleOptions.Values.ToList(),
-            SelectedOption = estimatedYieldStyleOptions[Service.Config.EstimatedYieldStyle],
-            OnOptionSelected = selectedItem =>
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(shortEstimatedYieldCb.X, shortEstimatedYieldCb.Bounds.Bottom),
+            String = "Display min/max yield",
+            IsChecked = Service.Config.DisplayRotationMinMax,
+            OnClick = isChecked =>
             {
-                Service.Config.EstimatedYieldStyle = estimatedYieldStyleOptions
-                                                     .First(kvp => kvp.Value == selectedItem).Key;
+                Service.Config.DisplayRotationMinMax = isChecked;
                 Service.Interface.SavePluginConfig(Service.Config);
+                Service.UIController.Update();
                 Service.GatheringController.ComputeRotations();
-            },
+            }
         };
-        estimatedYieldDropDownNode.AttachNode(this);
+        displayRotationMinMaxCb.AttachNode(this);
+
+        var displayGpUsedCb = new CheckboxNode
+        {
+            IsVisible = true,
+            Size = ContentSize with { Y = 20 },
+            Position = new Vector2(displayRotationMinMaxCb.X, displayRotationMinMaxCb.Bounds.Bottom),
+            String = "Display GP used",
+            IsChecked = Service.Config.DisplayRotationGp,
+            OnClick = isChecked =>
+            {
+                Service.Config.DisplayRotationGp = isChecked;
+                Service.Interface.SavePluginConfig(Service.Config);
+                Service.UIController.Update();
+                Service.GatheringController.ComputeRotations();
+            }
+        };
+        displayGpUsedCb.AttachNode(this);
 
         var separatorNode = new HorizontalLineNode
         {
-            Position = ContentStartPosition with { Y = estimatedYieldDropDownNode.Bounds.Bottom },
+            Position = ContentStartPosition with { Y = displayGpUsedCb.Bounds.Bottom },
             Size = new Vector2(ContentSize.X, 4),
         };
         separatorNode.AttachNode(this);

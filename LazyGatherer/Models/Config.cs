@@ -14,7 +14,9 @@ public class Config : IPluginConfiguration
     public bool DisplayBackground = true;
     public bool DisplayEstimatedYield = false;
     public ComparerEnum RotationCalculator = ComparerEnum.MaxYield;
-    public EstimatedYieldStyle EstimatedYieldStyle = EstimatedYieldStyle.Basic;
+    public bool DisplayShortEstimatedYield = false;
+    public bool DisplayRotationMinMax = false;
+    public bool DisplayRotationGp = false;
     public bool OneTurnRotation = false;
 
     // Masterpiece Settings
