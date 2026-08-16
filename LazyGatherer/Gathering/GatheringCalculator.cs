@@ -11,11 +11,12 @@ namespace LazyGatherer.Gathering
     {
         public static GatheringOutcome CalculateOutcome(Rotation rotation, GatheringOutcome? baseOutcome = null)
         {
+            var context = rotation.Context;
             var outcome = new GatheringOutcome()
             {
-                Yield = CalculateYield(rotation.Context),
-                MaxYield = CalculateYield(rotation.Context, 1),
-                MinYield = CalculateYield(rotation.Context, 0),
+                Yield = CalculateYield(context, context.Boon),
+                MaxYield = CalculateYield(context, 1, 1),
+                MinYield = CalculateYield(context, 0, 0),
                 UsedGp = CalculateGp(rotation.Actions)
             };
 
@@ -33,9 +34,9 @@ namespace LazyGatherer.Gathering
         }
 
 
-        private static double CalculateYield(GatheringContext context, double probability = 0.5)
+        private static double CalculateYield(GatheringContext context, double boon, double wiseAttemptProbability = 0.5)
         {
-            var wiseBinom = new Binomial(probability, context.WiseAttempts);
+            var wiseBinom = new Binomial(wiseAttemptProbability, context.WiseAttempts);
             var avgYield = 0d;
 
             for (var i = 0; i <= context.WiseAttempts; i++)
@@ -43,7 +44,7 @@ namespace LazyGatherer.Gathering
                 var wiseSuccessProb = wiseBinom.Probability(i);
                 var attempts = context.Attempts + i;
 
-                avgYield += ((context.BaseAmount + context.Boon * context.BoonBonus) * attempts +
+                avgYield += ((context.BaseAmount + boon * (context.HasBoon ? context.BoonBonus : 0)) * attempts +
                              context.BountifulBonus * Math.Min(attempts, context.BountifulAttempts)) * context.Chance *
                             wiseSuccessProb;
             }
