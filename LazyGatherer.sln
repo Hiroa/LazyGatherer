@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyGatherer", "LazyGathere
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KamiToolKit", "KamiToolKit\KamiToolKit.csproj", "{02431387-3DA6-4E79-A92D-F266B2E167F2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LazyGatherer.Tests", "LazyGatherer.Tests\LazyGatherer.Tests.csproj", "{06F09506-BE28-419E-B360-C26CFE86A396}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -18,6 +20,10 @@ Global
 		{13C812E9-0D42-4B95-8646-40EEBF30636F}.Release|x64.Build.0 = Release|x64
 		{02431387-3DA6-4E79-A92D-F266B2E167F2}.Release|x64.ActiveCfg = Release|Any CPU
 		{02431387-3DA6-4E79-A92D-F266B2E167F2}.Release|x64.Build.0 = Release|Any CPU
+		{06F09506-BE28-419E-B360-C26CFE86A396}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{06F09506-BE28-419E-B360-C26CFE86A396}.Debug|x64.Build.0 = Debug|Any CPU
+		{06F09506-BE28-419E-B360-C26CFE86A396}.Release|x64.ActiveCfg = Release|Any CPU
+		{06F09506-BE28-419E-B360-C26CFE86A396}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

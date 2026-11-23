@@ -36,6 +36,9 @@ namespace LazyGatherer.Gathering
 
         private static double CalculateYield(GatheringContext context, double boon, double wiseAttemptProbability = 0.5)
         {
+            boon = Math.Abs(context.Boon - 1) < 0.0001
+                       ? 1
+                       : boon; // if boon chance is 100%, then boon is always applied
             var wiseBinom = new Binomial(wiseAttemptProbability, context.WiseAttempts);
             var avgYield = 0d;
 
